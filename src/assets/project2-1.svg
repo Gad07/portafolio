@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#0b0b0b"/>
+  <rect x="70" y="70" width="1060" height="660" rx="20" fill="#07102A" stroke="#0F66FF" stroke-width="6" />
+  <rect x="160" y="160" width="880" height="150" rx="10" fill="#0F66FF" opacity="0.12" />
+  <rect x="160" y="360" width="440" height="220" rx="12" fill="#FFFFFF" opacity="0.02" />
+  <rect x="620" y="420" width="330" height="120" rx="12" fill="#0F66FF" opacity="0.18" />
+  <text x="120" y="720" fill="#BFDFFF" font-size="26" font-family="Verdana, Geneva, sans-serif">Landing Minimalista</text>
+</svg>

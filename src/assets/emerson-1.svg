@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#07102A"/>
+  <rect x="80" y="80" width="1040" height="640" rx="20" fill="#081729" stroke="#0F66FF" stroke-width="6" />
+  <rect x="160" y="140" width="880" height="120" rx="14" fill="#0F66FF" opacity="0.12" />
+  <text x="120" y="720" fill="#BFDFFF" font-size="28" font-family="Verdana, Geneva, sans-serif">Sistema de Gestión de Tickets - Emerson</text>
+</svg>

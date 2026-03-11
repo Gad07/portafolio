@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#0b0b0b"/>
+  <rect x="80" y="80" width="1040" height="640" rx="20" fill="#07102A" stroke="#0F66FF" stroke-width="6" />
+  <circle cx="220" cy="200" r="60" fill="#0F66FF" opacity="0.92" />
+  <rect x="340" y="160" width="660" height="120" rx="10" fill="#0F66FF" opacity="0.12" />
+  <rect x="340" y="310" width="380" height="30" rx="8" fill="#ffffff" opacity="0.08" />
+  <rect x="340" y="360" width="500" height="30" rx="8" fill="#ffffff" opacity="0.08" />
+  <rect x="760" y="420" width="260" height="80" rx="12" fill="#0F66FF" opacity="0.16" />
+  <text x="120" y="680" fill="#BFDFFF" font-size="26" font-family="Verdana, Geneva, sans-serif">Dashboard Analítico — Mock</text>
+</svg>

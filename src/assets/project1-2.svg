@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#07102A"/>
+  <rect x="60" y="60" width="1080" height="680" rx="26" fill="#081729" stroke="#0F66FF" stroke-width="4" />
+  <rect x="160" y="160" width="360" height="220" rx="16" fill="#0F66FF" opacity="0.18" />
+  <rect x="560" y="160" width="440" height="220" rx="16" fill="#ffffff" opacity="0.04" />
+  <rect x="160" y="420" width="440" height="180" rx="12" fill="#000" opacity="0.26" />
+  <text x="120" y="720" fill="#BFDFFF" font-size="26" font-family="Verdana, Geneva, sans-serif">Dashboard: Visualizaciones</text>
+</svg>
