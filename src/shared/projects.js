@@ -14,7 +14,15 @@ const projects = [
     privateSource: true,
     demo: 'https://www.grupo-let.com',
     image: 'https://www.grupo-let.com/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdlkbjyrtc%2Fimage%2Fupload%2Fv1768589307%2FUntitled_Project_4_rt65zz.jpg&w=828&q=70',
-    gallery: [let1],
+    gallery: [
+      './images/grupo-let/1.png',
+      './images/grupo-let/2.png',
+      './images/grupo-let/3.png',
+      './images/grupo-let/4.png',
+      './images/grupo-let/5.png'
+
+
+    ],
     year: '2025'
   },
   {
@@ -73,8 +81,14 @@ const projects = [
     tech: ['Laravel', 'PHP', 'MySQL'],
     repo: 'https://github.com/Gad07/e-learning-grupo-let',
     demo: '',
-    image: let1,
-    gallery: [let1],
+    image: '/images/e-learning/1.png',
+    gallery: [
+      '/images/e-learning/1.png',
+      '/images/e-learning/2.png',
+      '/images/e-learning/3.png',
+      '/images/e-learning/4.png',
+      '/images/e-learning/5.png'
+    ],
     year: '2025'
   }
 ]
