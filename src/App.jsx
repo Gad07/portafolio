@@ -1,43 +1,68 @@
-import { Routes, Route, NavLink } from 'react-router-dom'
+import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import Home from './pages/Home.jsx'
 import SobreMi from './pages/SobreMi.jsx'
 import Proyectos from './pages/Proyectos.jsx'
 import Contacto from './pages/Contacto.jsx'
 import Footer from './components/Footer.jsx'
-import ParticlesBg from './components/ParticlesBg.jsx'
+import GlobalCanvas from './components/canvas/GlobalCanvas.jsx'
+
+const navItems = [
+  { to: '/', label: 'Inicio', end: true },
+  { to: '/sobre-mi', label: 'Sobre mí' },
+  { to: '/proyectos', label: 'Proyectos' },
+  { to: '/contacto', label: 'Contáctame' },
+]
 
 function Nav() {
   return (
     <header className="nav">
-      <div className="container nav__inner">
-        <NavLink to="/" className="brand" aria-label="Inicio" style={{ fontSize: '34px' }}>
-          <span>[G]</span>
+      <div className="nav__inner">
+        <NavLink to="/" className="brand" aria-label="Inicio">
+          <span style={{ fontSize: '1.2rem' }}>[G]</span>
         </NavLink>
         <nav className="nav__links" aria-label="Navegación principal">
-          <NavLink to="/" end className={({isActive}) => isActive ? 'active' : ''}>Inicio</NavLink>
-          <NavLink to="/sobre-mi" className={({isActive}) => isActive ? 'active' : ''}>Sobre mí</NavLink>
-          <NavLink to="/proyectos" className={({isActive}) => isActive ? 'active' : ''}>Proyectos</NavLink>
-          <NavLink to="/contacto" className={({isActive}) => isActive ? 'active' : ''}>Contáctame</NavLink>
+          {navItems.map(({ to, label, end }) => (
+            <NavLink key={to} to={to} end={end} className={({ isActive }) => isActive ? 'active' : ''}>
+              {label}
+            </NavLink>
+          ))}
         </nav>
       </div>
-    </header>
+    </header >
   )
 }
 
 export default function App() {
+  const location = useLocation()
   return (
     <div className="app">
-      <ParticlesBg />
+      {/* 3D Global Canvas background */}
+      <GlobalCanvas />
+
+      {/* HTML Overlay Content */}
       <Nav />
-      <main className="container main">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/sobre-mi" element={<SobreMi />} />
-          <Route path="/proyectos" element={<Proyectos />} />
-          <Route path="/contacto" element={<Contacto />} />
-        </Routes>
+      <main className="main">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/sobre-mi" element={<SobreMi />} />
+              <Route path="/proyectos" element={<Proyectos />} />
+              <Route path="/contacto" element={<Contacto />} />
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       </main>
       <Footer />
     </div>
   )
 }
+
