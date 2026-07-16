@@ -88,7 +88,7 @@ export default function SobreMi() {
       <section className="about-hero">
         <div className="about-hero__grid">
           <motion.div {...fadeUp(0.1)} className="about-hero__title-col">
-            <h1 className="display-title" style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', margin: 0, lineHeight: 1 }}>
+            <h1 className="display-title" style={{ fontSize: 'clamp(2.5rem, 8vw, 7rem)', margin: 0, lineHeight: 1 }}>
               Sobre<br />
               <span className="accent-stroke">mí.</span>
             </h1>
