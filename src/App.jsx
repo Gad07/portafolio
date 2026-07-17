@@ -6,7 +6,9 @@ import Proyectos from './pages/Proyectos.jsx'
 import Contacto from './pages/Contacto.jsx'
 import Footer from './components/Footer.jsx'
 import GlobalCanvas from './components/canvas/GlobalCanvas.jsx'
-
+import Login from './pages/Login.jsx'
+import AdminDashboard from './pages/AdminDashboard.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 const navItems = [
   { to: '/', label: 'Inicio', end: true },
   { to: '/sobre-mi', label: 'Sobre mí' },
@@ -56,6 +58,12 @@ export default function App() {
               <Route path="/sobre-mi" element={<SobreMi />} />
               <Route path="/proyectos" element={<Proyectos />} />
               <Route path="/contacto" element={<Contacto />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<Home />} />
             </Routes>
           </motion.div>
