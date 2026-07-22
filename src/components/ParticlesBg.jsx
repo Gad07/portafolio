@@ -7,27 +7,76 @@ export default function ParticlesBg() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { alpha: true }) // alpha para performance
 
     const state = {
       particles: [],
-      mouse: { x: -9999, y: -9999 },
+      mouse: { x: -9999, y: -9999, vx: 0, vy: 0 }, // velocidad del mouse para inercia
       w: 0,
       h: 0,
       dpr: Math.min(window.devicePixelRatio || 1, 2),
     }
 
     const opts = {
-      count: 80,
-      speed: 0.25,
-      maxLinkDist: 120,
-      radius: [1, 2.2],
-      lineColor: 'rgba(200,200,200,0.08)',
+      count: 100,           // ↑ más partículas
+      speed: 0.3,
+      maxLinkDist: 140,     // ↑ distancia de conexión
+      radius: [1, 2.5],
+      lineColor: 'rgba(200,200,200,0.08)', // base, se calculará por alpha
       dotColor: 'rgba(220,220,220,0.22)',
-      mouseRadius: 90,
+      mouseRadius: 100,
+      mouseEase: 0.15,      // ← NUEVO: suavizado del mouse
+      connectionOpacity: 0.15, // ← NUEVO: opacidad máxima de líneas
     }
 
     const rand = (min, max) => Math.random() * (max - min) + min
+
+    // ─── POOL de objetos para evitar GC ───
+    class Particle {
+      constructor() { this.reset() }
+      reset() {
+        this.x = rand(0, state.w)
+        this.y = rand(0, state.h)
+        this.vx = rand(-opts.speed, opts.speed)
+        this.vy = rand(-opts.speed, opts.speed)
+        this.r = rand(opts.radius[0], opts.radius[1])
+        this.baseVx = this.vx
+        this.baseVy = this.vy
+      }
+      update() {
+        // Movimiento base
+        this.x += this.vx
+        this.y += this.vy
+
+        // Wrap suave
+        const margin = 20
+        if (this.x < -margin) this.x = state.w + margin
+        if (this.x > state.w + margin) this.x = -margin
+        if (this.y < -margin) this.y = state.h + margin
+        if (this.y > state.h + margin) this.y = -margin
+
+        // Repulsión del mouse con easing
+        const dx = this.x - state.mouse.x
+        const dy = this.y - state.mouse.y
+        const d2 = dx * dx + dy * dy
+        const r2 = opts.mouseRadius * opts.mouseRadius
+
+        if (d2 < r2) {
+          const d = Math.sqrt(d2) || 1
+          const force = (1 - d / opts.mouseRadius) * 2 // fuerza proporcional
+          const ux = dx / d
+          const uy = dy / d
+          
+          // Aplicar fuerza gradualmente (easing)
+          this.vx += (ux * force - this.vx + this.baseVx) * 0.1
+          this.vy += (uy * force - this.vy + this.baseVy) * 0.1
+        } else {
+          // Regresar a velocidad base suavemente
+          this.vx += (this.baseVx - this.vx) * 0.02
+          this.vy += (this.baseVy - this.vy) * 0.02
+        }
+      }
+    }
 
     function resize() {
       state.w = window.innerWidth
@@ -40,112 +89,123 @@ export default function ParticlesBg() {
     }
 
     function initParticles() {
-      state.particles = Array.from({ length: opts.count }, () => ({
-        x: rand(0, state.w),
-        y: rand(0, state.h),
-        vx: rand(-opts.speed, opts.speed),
-        vy: rand(-opts.speed, opts.speed),
-        r: rand(opts.radius[0], opts.radius[1]),
-      }))
+      state.particles = Array.from({ length: opts.count }, () => new Particle())
     }
 
+    // ─── DIBUJO OPTIMIZADO ───
     function draw() {
-      ctx.clearRect(0, 0, state.w, state.h)
+      // Fade trail en lugar de clear completo (efecto "cola")
+      ctx.fillStyle = 'rgba(10, 10, 15, 0.15)' // color de fondo con alpha
+      ctx.fillRect(0, 0, state.w, state.h)
 
-      // lines
-      for (let i = 0; i < state.particles.length; i++) {
-        const p = state.particles[i]
-        for (let j = i + 1; j < state.particles.length; j++) {
-          const q = state.particles[j]
+      const particles = state.particles
+      const len = particles.length
+
+      // Líneas: solo verificar j > i (triángulo superior)
+      for (let i = 0; i < len; i++) {
+        const p = particles[i]
+        
+        for (let j = i + 1; j < len; j++) {
+          const q = particles[j]
           const dx = p.x - q.x
           const dy = p.y - q.y
-          const d = Math.hypot(dx, dy)
-          if (d < opts.maxLinkDist) {
-            const alpha = 1 - d / opts.maxLinkDist
-            ctx.strokeStyle = opts.lineColor.replace(/0\.08|0\.1|0\.2/, (m) => String(Math.min(0.2, Math.max(0.06, alpha * 0.2))))
+          const d = dx * dx + dy * dy // sin sqrt, comparar con d2
+          const maxD2 = opts.maxLinkDist * opts.maxLinkDist
+
+          if (d < maxD2) {
+            const dist = Math.sqrt(d)
+            const alpha = (1 - dist / opts.maxLinkDist) * opts.connectionOpacity
+            ctx.strokeStyle = `rgba(200, 200, 220, ${alpha.toFixed(3)})`
+            ctx.lineWidth = alpha * 1.5
             ctx.beginPath()
             ctx.moveTo(p.x, p.y)
             ctx.lineTo(q.x, q.y)
             ctx.stroke()
           }
         }
-      }
 
-      // dots
-      for (const p of state.particles) {
+        // Dibujar partícula
         ctx.fillStyle = opts.dotColor
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
         ctx.fill()
-      }
-    }
-
-    function update() {
-      const mx = state.mouse.x
-      const my = state.mouse.y
-      for (const p of state.particles) {
-        // simple motion
-        p.x += p.vx
-        p.y += p.vy
-
-        // gentle wrap
-        if (p.x < -10) p.x = state.w + 10
-        if (p.x > state.w + 10) p.x = -10
-        if (p.y < -10) p.y = state.h + 10
-        if (p.y > state.h + 10) p.y = -10
-
-        // mouse repulsion
-        const dx = p.x - mx
-        const dy = p.y - my
-        const d2 = dx * dx + dy * dy
-        if (d2 < opts.mouseRadius * opts.mouseRadius) {
-          const d = Math.sqrt(d2) || 1
-          const ux = dx / d
-          const uy = dy / d
-          p.x += ux * 1.5
-          p.y += uy * 1.5
-        }
+        
+        // Brillo sutil
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.1})`
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r * 0.5, 0, Math.PI * 2)
+        ctx.fill()
       }
     }
 
     function loop() {
-      update()
+      // Actualizar todas las partículas
+      for (const p of state.particles) p.update()
       draw()
       rafRef.current = requestAnimationFrame(loop)
     }
 
+    // ─── MOUSE CON EASING ───
+    let targetMouse = { x: -9999, y: -9999 }
+    
     function onMouseMove(e) {
-      state.mouse.x = e.clientX
-      state.mouse.y = e.clientY
+      targetMouse.x = e.clientX
+      targetMouse.y = e.clientY
     }
+    
     function onMouseLeave() {
-      state.mouse.x = -9999
-      state.mouse.y = -9999
+      targetMouse.x = -9999
+      targetMouse.y = -9999
+    }
+
+    // Suavizar posición del mouse en cada frame
+    function updateMouse() {
+      state.mouse.x += (targetMouse.x - state.mouse.x) * opts.mouseEase
+      state.mouse.y += (targetMouse.y - state.mouse.y) * opts.mouseEase
+    }
+
+    // Reemplazar loop para incluir updateMouse
+    function gameLoop() {
+      updateMouse()
+      for (const p of state.particles) p.update()
+      draw()
+      rafRef.current = requestAnimationFrame(gameLoop)
     }
 
     resize()
     initParticles()
-    loop()
+    gameLoop()
 
-    window.addEventListener('resize', () => {
+    const onResize = () => {
       resize()
-      // keep density across sizes
-      if (state.particles.length !== opts.count) initParticles()
-    })
+      initParticles()
+    }
+
+    window.addEventListener('resize', onResize)
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseleave', onMouseLeave)
 
     return () => {
       cancelAnimationFrame(rafRef.current)
+      window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseleave', onMouseLeave)
     }
   }, [])
 
   return (
-    <div className="bg-particles" aria-hidden>
-      <canvas ref={canvasRef} />
-    </div>
+    <canvas 
+      ref={canvasRef} 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -1,
+        pointerEvents: 'none',
+      }}
+      aria-hidden="true"
+    />
   )
 }
-

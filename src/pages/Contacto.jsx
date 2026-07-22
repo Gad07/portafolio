@@ -46,6 +46,7 @@ export default function Contacto() {
       <div className="contact-hero">
 
         <motion.div {...fadeUp(0.1)}>
+
           <h1 className="display-title" style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)' }}>
             Disponible <br />
             <span className="accent-stroke">para colaborar.</span>
@@ -140,15 +141,17 @@ export default function Contacto() {
               </li>
             ))}
           </ul>
-          <p style={{ color: 'var(--muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            Horario de Atención
-          </p>
-          <p style={{ color: '#fff', fontWeight: 600, marginTop: '0.5rem' }}>
-            Lunes – Viernes<br />9:00 AM – 6:00 PM (CDMX)
-          </p>
+
+          <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1.5rem' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Horario de Atención
+            </p>
+            <p style={{ color: '#fff', fontWeight: 600, marginTop: '0.4rem' }}>
+              Lunes – Viernes<br />9:00 AM – 6:00 PM (CDMX)
+            </p>
+          </div>
         </motion.div>
       </div>
-
-    </div >
+    </div>
   )
 }

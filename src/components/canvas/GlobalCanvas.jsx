@@ -5,27 +5,60 @@ import { useLocation } from 'react-router-dom'
 import * as THREE from 'three'
 import OrganicScene from './OrganicScene.jsx'
 
-// ─── Camera Controller (Cinematic Route Transitions) ────────────────────────
+// ─── Camera Controller (Cinematic Route Transitions & Mouse Parallax) ─────────
 function CameraController({ pathname }) {
   useFrame((state, delta) => {
-    // We add a subtle constant sway to the camera
     const t = state.clock.elapsedTime
     
-    // Determine base position by route
-    let targetZ = 8
-    let targetX = 0
+    // Base camera positions per route
+    let targetX = 0.2
     let targetY = 0
+    let targetZ = 8.0
+
+    let lookX = 0.2
+    let lookY = 0
+    let lookZ = 0
     
-    if (pathname === '/sobre-mi') { targetZ = 6; targetX = 2; }
-    if (pathname === '/proyectos') { targetZ = 7; targetX = -2; targetY = 1; }
-    if (pathname === '/contacto') { targetZ = 5; } // Closer to the blob
+    if (pathname === '/sobre-mi') {
+      targetX = 2.4
+      targetY = 0.6
+      targetZ = 6.8
+      lookX = 0.5
+    } else if (pathname === '/proyectos') {
+      targetX = -2.2
+      targetY = 1.2
+      targetZ = 7.2
+      lookX = -0.5
+      lookY = 0.2
+    } else if (pathname === '/contacto') {
+      targetX = 0.5
+      targetY = 0
+      targetZ = 7.5
+      lookX = 0.5
+      lookY = 0
+    }
     
-    // Add sway
-    targetX += Math.sin(t * 0.3) * 0.5
-    targetY += Math.cos(t * 0.2) * 0.5
+    // Continuous subtle orbital sway
+    const swayX = Math.sin(t * 0.4) * 0.35
+    const swayY = Math.cos(t * 0.3) * 0.25
     
-    state.camera.position.lerp(new THREE.Vector3(targetX, targetY, targetZ), 1.5 * delta)
-    state.camera.lookAt(0, 0, 0)
+    // Interactive mouse parallax depth
+    const mouseX = state.pointer.x * 0.7
+    const mouseY = state.pointer.y * 0.5
+    
+    const finalTargetPos = new THREE.Vector3(
+      targetX + swayX + mouseX,
+      targetY + swayY + mouseY,
+      targetZ
+    )
+
+    // Smooth lerp (fluid camera damping)
+    state.camera.position.lerp(finalTargetPos, 3.0 * delta)
+    
+    // Smooth lookAt target lerp
+    const currentLookAt = new THREE.Vector3()
+    state.camera.getWorldDirection(currentLookAt)
+    state.camera.lookAt(lookX + mouseX * 0.2, lookY + mouseY * 0.2, lookZ)
   })
   return null
 }
