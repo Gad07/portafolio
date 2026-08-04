@@ -14,19 +14,22 @@ export default function Proyectos() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [activeCategory, setActiveCategory] = useState('Todos')
+
+  const categories = ['Todos', 'Full-Stack', 'Frontend', 'Backend', 'Mobile']
 
   async function fetchProjects() {
     try {
-      const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(collection(db, 'projects'));
       const data = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+      // Ordenar proyectos por campo 'order' ascendente
+      data.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
       setItems(data);
     } catch (err) {
       console.error("Error al cargar proyectos desde Firebase:", err);
-      // Fallback behavior if needed, currently just showing empty or error state
       setError("No se pudieron cargar los proyectos. Intenta más tarde.");
     } finally {
       setLoading(false);
@@ -36,6 +39,10 @@ export default function Proyectos() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  const filteredItems = activeCategory === 'Todos'
+    ? items
+    : items.filter(p => (p.category || 'Full-Stack').toLowerCase() === activeCategory.toLowerCase());
 
   return (
     <div className="projects-page">
@@ -55,13 +62,43 @@ export default function Proyectos() {
         </motion.div>
       </div>
 
-      <section className="container" style={{ paddingBottom: '8rem', paddingTop: '6rem' }}>
+      <section className="container" style={{ paddingBottom: '8rem', paddingTop: '4rem' }}>
+        {/* Pestañas de Filtrado por Categoría (Switches Estilizados) */}
+        <div className="category-filter-bar">
+          {categories.map(cat => {
+            const isActive = activeCategory === cat;
+            const count = cat === 'Todos' 
+              ? items.length 
+              : items.filter(p => (p.category || 'Full-Stack').toLowerCase() === cat.toLowerCase()).length;
+
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`category-filter-btn ${isActive ? 'is-active' : ''}`}
+              >
+                {isActive && (
+                  <motion.div 
+                    layoutId="activeCategoryTab"
+                    className="category-filter-pill"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="category-filter-label">
+                  {cat}
+                  {count > 0 && <span className="category-filter-count">{count}</span>}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="editorial-list">
-          {items.map((p, i) => (
+          {filteredItems.map((p, i) => (
             <ProjectCard key={p.id} project={p} index={i} />
           ))}
-          {!loading && items.length === 0 && (
-            <p style={{ color: 'var(--muted)' }}>No hay proyectos para mostrar aún.</p>
+          {!loading && filteredItems.length === 0 && (
+            <p style={{ color: 'var(--muted)', padding: '2rem 0' }}>No hay proyectos disponibles en la categoría "{activeCategory}".</p>
           )}
         </div>
       </section>
