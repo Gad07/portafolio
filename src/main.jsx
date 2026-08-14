@@ -4,14 +4,17 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './styles/global.css'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { SceneProvider } from './context/SceneContext.jsx'
 
 const root = createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <SceneProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </SceneProvider>
     </AuthProvider>
   </React.StrictMode>
 )

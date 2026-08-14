@@ -4,8 +4,36 @@ import { Float, Stars } from '@react-three/drei'
 import * as THREE from 'three'
 
 // ═══════════════════════════════════════════════════════════════════════════════
-//  SISTEMA SOLAR 3D & FONDO FOTORREALISTA DE LA VÍA LÁCTEA
+//  SISTEMA SOLAR 3D CON TEXTURAS FOTOGRÁFICAS 2K DE LA NASA & VÍA LÁCTEA
 // ═══════════════════════════════════════════════════════════════════════════════
+
+const textureLoader = new THREE.TextureLoader()
+
+const PLANET_MAP_PATHS = {
+  Mercury: '/textures/planets/2k_mercury.jpg',
+  Venus: '/textures/planets/2k_venus_atmosphere.jpg',
+  Earth: '/textures/planets/2k_earth_daymap.jpg',
+  EarthClouds: '/textures/planets/2k_earth_clouds.jpg',
+  Moon: '/textures/planets/2k_moon.jpg',
+  Mars: '/textures/planets/2k_mars.jpg',
+  Jupiter: '/textures/planets/2k_jupiter.jpg',
+  Saturn: '/textures/planets/2k_saturn.jpg',
+  Uranus: '/textures/planets/2k_uranus.jpg',
+  Neptune: '/textures/planets/2k_neptune.jpg',
+  Sun: '/textures/planets/2k_sun.jpg',
+  MilkyWay: '/textures/planets/2k_stars_milky_way.jpg',
+  SaturnRing: '/textures/planets/2k_saturn_ring_alpha.png'
+}
+
+const loadedPlanetTextures = {}
+if (typeof window !== 'undefined') {
+  Object.entries(PLANET_MAP_PATHS).forEach(([key, path]) => {
+    const tex = textureLoader.load(path)
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.anisotropy = 8
+    loadedPlanetTextures[key] = tex
+  })
+}
 
 const PLANET_DATA = [
   {
@@ -830,10 +858,13 @@ function Sun() {
       <pointLight color="#FFF5E0" intensity={140} distance={100} decay={1.3} />
       <pointLight color="#FF7700" intensity={70} distance={70} decay={1.6} />
 
-      {/* Núcleo del sol con plasma hirviendo */}
+      {/* Núcleo del sol con textura fotográfica real 2K de la NASA */}
       <mesh ref={sunMeshRef}>
         <sphereGeometry args={[sunRadius, 64, 64]} />
-        <primitive object={sunMaterial} ref={matRef} attach="material" />
+        <meshBasicMaterial
+          map={loadedPlanetTextures.Sun}
+          color="#FFF8D5"
+        />
       </mesh>
 
       {/* Glow de la atmósfera interna (sin bordes duros) */}
@@ -874,64 +905,22 @@ function Atmosphere({ radius, color, opacity = 0.3 }) {
   )
 }
 
-function PlanetRings({ innerRadius, outerRadius, color, opacity = 0.95 }) {
+function PlanetRings({ innerRadius, outerRadius, color, opacity = 0.98 }) {
   const ringRef = useRef()
 
-  const ringTexture = useMemo(() => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 1024
-    canvas.height = 1024
-    const ctx = canvas.getContext('2d')
-    const center = 512
-
-    ctx.clearRect(0, 0, 1024, 1024)
-
-    // Dibujar anillos concéntricos perfectos sin distorsión de textura
-    const minR = 512 * (innerRadius / outerRadius)
-    const maxR = 506
-
-    for (let r = minR; r <= maxR; r += 0.6) {
-      const t = (r - minR) / (maxR - minR) // 0 = borde interior, 1 = borde exterior
-
-      let alpha = 0
-      let colorStr = '235, 210, 165'
-
-      if (t < 0.18) {
-        // Anillo C (polvo tenue interior)
-        alpha = (t / 0.18) * 0.38
-        colorStr = '180, 155, 125'
-      } else if (t >= 0.18 && t < 0.65) {
-        // Anillo B (ancho, brillante, denso con estriaciones)
-        const rel = (t - 0.18) / 0.47
-        const stripe = Math.sin(rel * Math.PI * 45) * 0.15 + 0.85
-        alpha = 0.95 * stripe
-        colorStr = '248, 220, 175'
-      } else if (t >= 0.65 && t < 0.73) {
-        // División de Cassini (brecha oscura realista)
-        alpha = 0.02
-        colorStr = '15, 15, 15'
-      } else if (t >= 0.73 && t < 0.94) {
-        // Anillo A (brillante medio con micro-ranuras)
-        const rel = (t - 0.73) / 0.21
-        const stripe = Math.sin(rel * Math.PI * 30) * 0.12 + 0.88
-        alpha = 0.82 * stripe
-        colorStr = '228, 200, 155'
-      } else if (t >= 0.94) {
-        // Anillo F exterior
-        alpha = (1.0 - (t - 0.94) / 0.06) * 0.45
-        colorStr = '235, 210, 165'
-      }
-
-      ctx.beginPath()
-      ctx.arc(center, center, r, 0, Math.PI * 2)
-      ctx.strokeStyle = `rgba(${colorStr}, ${alpha})`
-      ctx.lineWidth = 0.9
-      ctx.stroke()
+  const ringGeometry = useMemo(() => {
+    const geo = new THREE.RingGeometry(innerRadius, outerRadius, 128, 8)
+    const pos = geo.attributes.position
+    const uvs = geo.attributes.uv
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i)
+      const y = pos.getY(i)
+      const r = Math.sqrt(x * x + y * y)
+      const u = Math.min(1.0, Math.max(0.0, (r - innerRadius) / (outerRadius - innerRadius)))
+      uvs.setXY(i, u, 0.5)
     }
-
-    const tex = new THREE.CanvasTexture(canvas)
-    tex.anisotropy = 16
-    return tex
+    uvs.needsUpdate = true
+    return geo
   }, [innerRadius, outerRadius])
 
   useFrame((state, delta) => {
@@ -940,19 +929,16 @@ function PlanetRings({ innerRadius, outerRadius, color, opacity = 0.95 }) {
     }
   })
 
-  const planeSize = outerRadius * 2.05
-
   return (
     <group rotation={[Math.PI * 0.38, -Math.PI * 0.06, -Math.PI * 0.12]}>
-      <mesh ref={ringRef}>
-        <planeGeometry args={[planeSize, planeSize]} />
+      <mesh ref={ringRef} geometry={ringGeometry}>
         <meshStandardMaterial
-          map={ringTexture}
-          transparent
+          map={loadedPlanetTextures.SaturnRing}
+          transparent={true}
           opacity={opacity}
           side={THREE.DoubleSide}
-          roughness={0.3}
-          metalness={0.05}
+          roughness={0.4}
+          metalness={0.02}
           depthWrite={false}
         />
       </mesh>
@@ -960,7 +946,7 @@ function PlanetRings({ innerRadius, outerRadius, color, opacity = 0.95 }) {
   )
 }
 
-function Moon({ radius, distance, speed, color = '#C0C0C0' }) {
+function Moon({ name, radius, distance, speed, color = '#C0C0C0' }) {
   const moonRef = useRef()
   const angle = useRef(Math.random() * Math.PI * 2)
 
@@ -975,8 +961,13 @@ function Moon({ radius, distance, speed, color = '#C0C0C0' }) {
   return (
     <group ref={moonRef} position={[Math.cos(angle.current) * distance, 0, Math.sin(angle.current) * distance]}>
       <mesh>
-        <sphereGeometry args={[radius, 16, 16]} />
-        <meshStandardMaterial color={color} roughness={0.9} metalness={0.1} />
+        <sphereGeometry args={[radius, 32, 32]} />
+        <meshStandardMaterial 
+          map={loadedPlanetTextures.Moon} 
+          color={color} 
+          roughness={0.92} 
+          metalness={0.02} 
+        />
       </mesh>
     </group>
   )
@@ -1230,9 +1221,10 @@ function Planet({ data }) {
 
   const textures = useMemo(() => {
     const tex = {}
-    const texType = type === 'earth' ? 'earth' : type === 'mars' ? 'mars' : type === 'gas' ? 'gas' : type === 'ice' ? 'ice' : type === 'mercury' ? 'mercury' : type === 'venus' ? 'venus' : 'moon'
-    tex.surface = generateTexture(texType, type === 'gas' ? (data.name === 'Jupiter' ? 1 : 2) : 0)
-    if (hasClouds) tex.clouds = generateTexture('earth_clouds', 0)
+    tex.surface = loadedPlanetTextures[data.name] || generateTexture(type, type === 'gas' ? (data.name === 'Jupiter' ? 1 : 2) : 0)
+    if (hasClouds) {
+      tex.clouds = loadedPlanetTextures.EarthClouds || generateTexture('earth_clouds', 0)
+    }
     return tex
   }, [type, hasClouds, data.name])
 
@@ -1258,27 +1250,27 @@ function Planet({ data }) {
     <group ref={groupRef}>
       <group ref={meshRef}>
         <mesh>
-          <sphereGeometry args={[radius, 32, 32]} />
+          <sphereGeometry args={[radius, 64, 64]} />
           <meshStandardMaterial
             map={textures.surface}
-            roughness={type === 'gas' ? 0.6 : 0.85}
-            metalness={type === 'gas' ? 0.1 : 0.05}
+            roughness={type === 'gas' ? 0.45 : (type === 'ice' ? 0.35 : 0.82)}
+            metalness={type === 'gas' ? 0.05 : 0.02}
           />
         </mesh>
 
         {hasClouds && (
-          <mesh ref={cloudsRef} scale={1.02}>
-            <sphereGeometry args={[radius, 32, 32]} />
+          <mesh ref={cloudsRef} scale={1.025}>
+            <sphereGeometry args={[radius, 64, 64]} />
             <meshStandardMaterial
               map={textures.clouds}
               transparent
-              opacity={0.55}
+              opacity={0.78}
               depthWrite={false}
             />
           </mesh>
         )}
 
-        {hasAtmosphere && <Atmosphere radius={radius} color={atmosphereColor} opacity={0.25} />}
+        {hasAtmosphere && <Atmosphere radius={radius} color={atmosphereColor} opacity={0.32} />}
 
         {hasRing && (
           <PlanetRings
@@ -1514,35 +1506,47 @@ function ShootingStars({ count = 25 }) {
     exp.geo.attributes.position.needsUpdate = true
   }
 
+  const _tempTarget = useMemo(() => ({
+    pos: new THREE.Vector3(),
+    color: '#FF4500',
+    radius: 1.0
+  }), [])
+  const _dir = useMemo(() => new THREE.Vector3(), [])
+  const _ray = useMemo(() => new THREE.Vector3(), [])
+
   const getLiveTarget = (targetType, clockTime) => {
     if (targetType === 'sun') {
-      return { pos: new THREE.Vector3(0, 0, 0), color: '#FF4500', radius: 1.75 }
-    }
-    if (targetType === 'earth') {
+      _tempTarget.pos.set(0, 0, 0)
+      _tempTarget.color = '#FF4500'
+      _tempTarget.radius = 1.75
+    } else if (targetType === 'earth') {
       const angle = clockTime * 0.08 * 0.08 + 1.2
-      const pos = new THREE.Vector3(Math.cos(angle) * 6.2, 0, Math.sin(angle) * 6.2)
-      return { pos, color: '#38BDF8', radius: 0.65 }
-    }
-    if (targetType === 'mars') {
+      _tempTarget.pos.set(Math.cos(angle) * 6.2, 0, Math.sin(angle) * 6.2)
+      _tempTarget.color = '#38BDF8'
+      _tempTarget.radius = 0.65
+    } else if (targetType === 'mars') {
       const angle = clockTime * 0.053 * 0.08 + 2.5
-      const pos = new THREE.Vector3(Math.cos(angle) * 8.2, 0, Math.sin(angle) * 8.2)
-      return { pos, color: '#FF5500', radius: 0.55 }
-    }
-    if (targetType === 'jupiter') {
+      _tempTarget.pos.set(Math.cos(angle) * 8.2, 0, Math.sin(angle) * 8.2)
+      _tempTarget.color = '#FF5500'
+      _tempTarget.radius = 0.55
+    } else if (targetType === 'jupiter') {
       const angle = clockTime * 0.043 * 0.08 + 0.5
-      const pos = new THREE.Vector3(Math.cos(angle) * 12.0, 0, Math.sin(angle) * 12.0)
-      return { pos, color: '#FFAA00', radius: 1.15 }
-    }
-    if (targetType === 'saturn') {
+      _tempTarget.pos.set(Math.cos(angle) * 12.0, 0, Math.sin(angle) * 12.0)
+      _tempTarget.color = '#FFAA00'
+      _tempTarget.radius = 1.15
+    } else if (targetType === 'saturn') {
       const angle = clockTime * 0.034 * 0.08 + 4.1
-      const pos = new THREE.Vector3(Math.cos(angle) * 16.2, 0, Math.sin(angle) * 16.2)
-      return { pos, color: '#FFE090', radius: 1.35 }
+      _tempTarget.pos.set(Math.cos(angle) * 16.2, 0, Math.sin(angle) * 16.2)
+      _tempTarget.color = '#FFE090'
+      _tempTarget.radius = 1.35
+    } else {
+      // Cinturón de Asteroides
+      const angle = clockTime * 0.016 + 1.5
+      _tempTarget.pos.set(Math.cos(angle) * 7.25, 0.05, Math.sin(angle) * 7.25)
+      _tempTarget.color = '#FFCC00'
+      _tempTarget.radius = 0.75
     }
-
-    // Cinturón de Asteroides (radio ~ 7.25)
-    const angle = clockTime * 0.016 + Math.random() * Math.PI * 2
-    const pos = new THREE.Vector3(Math.cos(angle) * 7.25, (Math.random() - 0.5) * 0.3, Math.sin(angle) * 7.25)
-    return { pos, color: '#FFCC00', radius: 0.75 }
+    return _tempTarget
   }
 
   const initStar = (star, clockTime = 0) => {
@@ -1550,20 +1554,17 @@ function ShootingStars({ count = 25 }) {
     const targetType = types[Math.floor(Math.random() * types.length)]
     const target = getLiveTarget(targetType, clockTime)
 
-    // Posición inicial amplia alrededor del objetivo a 18-24 unidades
     const theta = Math.random() * Math.PI * 2
     const phi = (Math.random() * 0.35 + 0.1) * Math.PI
     const travelDist = Math.random() * 8 + 16
 
-    const rayDir = new THREE.Vector3(
+    _ray.set(
       Math.cos(theta) * Math.cos(phi),
       Math.sin(phi),
       Math.sin(theta) * Math.cos(phi)
     ).normalize()
 
-    const startPos = target.pos.clone().add(rayDir.multiplyScalar(travelDist))
-
-    star.position.copy(startPos)
+    star.position.copy(target.pos).addScaledVector(_ray, travelDist)
     star.userData.targetType = targetType
     star.userData.impactColor = target.color
     star.userData.hitRadius = target.radius
@@ -1577,18 +1578,20 @@ function ShootingStars({ count = 25 }) {
   useFrame((state, delta) => {
     const clockTime = state.clock.elapsedTime
 
-    // 1. Animar Estrellas Fugaces en Guiado Directo al Objetivo Vivo
+    // 1. Animar Estrellas Fugaces con cero asignaciones de memoria
     if (groupRef.current) {
-      groupRef.current.children.forEach((star) => {
+      const stars = groupRef.current.children
+      for (let i = 0; i < stars.length; i++) {
+        const star = stars[i]
         if (!star.userData.speed) {
           star.visible = false
           initStar(star, clockTime)
-          return
+          continue
         }
 
         if (star.userData.delay > 0) {
           star.userData.delay -= delta
-          return
+          continue
         }
 
         if (!star.visible) {
@@ -1600,7 +1603,7 @@ function ShootingStars({ count = 25 }) {
         star.userData.life += delta
         if (star.userData.life > star.userData.maxLife) {
           initStar(star, clockTime)
-          return
+          continue
         }
 
         const progress = star.userData.life / star.userData.maxLife
@@ -1608,27 +1611,24 @@ function ShootingStars({ count = 25 }) {
         const fadeOut = Math.max(0, 1 - (progress - 0.7) / 0.3)
         star.material.opacity = fadeIn * fadeOut * 0.98
 
-        // Obtener la posición viva del objetivo en este frame exacto
+        // Obtener la posición viva del objetivo reutilizando vector
         const liveTarget = getLiveTarget(star.userData.targetType, clockTime)
 
-        // Vector de velocidad persiguiendo dinámicamente la posición viva del objetivo
-        const dir = liveTarget.pos.clone().sub(star.position).normalize()
+        // Vector de dirección de persecución
+        _dir.copy(liveTarget.pos).sub(star.position).normalize()
         const speed = star.userData.speed || 22.0
-        const movement = dir.clone().multiplyScalar(speed * delta)
-        star.position.add(movement)
+        star.position.addScaledVector(_dir, speed * delta)
 
         star.scale.set(1.8, 1.8, speed * 0.18)
         star.lookAt(liveTarget.pos)
 
-        // Detección instantánea de impacto físico en la superficie viva
+        // Detección instantánea de impacto físico
         const currentDist = star.position.distanceTo(liveTarget.pos)
-
         if (currentDist <= liveTarget.radius + 0.3) {
-          // DISPARAR EXPLOSIÓN GARANTIZADA EXACTAMENTE EN LA SUPERFICIE VIVA
           triggerExplosion(liveTarget.pos, liveTarget.color)
           initStar(star, clockTime)
         }
-      })
+      }
     }
 
     // 2. Animar Explosiones en Tiempo Real
@@ -1958,6 +1958,20 @@ export default function OrganicScene({ pathname }) {
     <>
       {/* Cámara controlada por props del Canvas padre */}
 
+      {/* Fondo Panorámico de la Vía Láctea en 2K */}
+      {loadedPlanetTextures.MilkyWay && (
+        <mesh rotation={[0.2, 0.5, 0.1]}>
+          <sphereGeometry args={[95, 48, 48]} />
+          <meshBasicMaterial
+            map={loadedPlanetTextures.MilkyWay}
+            side={THREE.BackSide}
+            transparent
+            opacity={0.48}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
+
       {/* Campo de estrellas */}
       <Stars
         radius={80}
@@ -1970,8 +1984,8 @@ export default function OrganicScene({ pathname }) {
       />
 
       {/* Iluminación */}
-      <ambientLight intensity={0.15} color="#1a1a3e" />
-      <pointLight color="#ffddaa" intensity={50} distance={60} position={[0, 0, 0]} decay={1.5} />
+      <ambientLight intensity={0.2} color="#1a1a3e" />
+      <pointLight color="#ffddaa" intensity={60} distance={70} position={[0, 0, 0]} decay={1.4} />
 
       {/* Sistema Solar Trazado e Inclinado */}
       <group ref={solarSystemRef} visible={true}>

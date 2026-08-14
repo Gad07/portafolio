@@ -6,6 +6,7 @@ import Proyectos from './pages/Proyectos.jsx'
 import Contacto from './pages/Contacto.jsx'
 import Footer from './components/Footer.jsx'
 import GlobalCanvas from './components/canvas/GlobalCanvas.jsx'
+import SceneSwitch from './components/SceneSwitch.jsx'
 import Login from './pages/Login.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -29,9 +30,10 @@ function Nav() {
               {label}
             </NavLink>
           ))}
+          <SceneSwitch />
         </nav>
       </div>
-    </header >
+    </header>
   )
 }
 
