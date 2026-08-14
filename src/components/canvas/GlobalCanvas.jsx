@@ -201,9 +201,8 @@ export default function GlobalCanvas() {
 
         {isMusic && (
           <>
-            {/* Estudio de Grabación Profesional */}
-            <color attach="background" args={['#0B1120']} />
-            <fog attach="fog" args={['#0B1120', 14, 38]} />
+            {/* Estudio de Grabación Profesional - 100% Nítido sin Fog ni Blur */}
+            <color attach="background" args={['#080D1A']} />
             <MusicCameraController pathname={pathname} />
             <MusicScene />
           </>
