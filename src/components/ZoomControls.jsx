@@ -61,7 +61,7 @@ export default function ZoomControls() {
         style={{
           background: 'transparent',
           border: 'none',
-          color: isAquarium ? '#38BDF8' : '#EC4899',
+          color: isAquarium ? '#00E5FF' : '#C084FC',
           fontSize: '0.82rem',
           fontWeight: 700,
           padding: '0 6px',

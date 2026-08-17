@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom'
 import * as THREE from 'three'
 import AquariumScene from './AquariumScene.jsx'
 import OrganicScene from './OrganicScene.jsx'
-import MusicScene from './MusicScene.jsx'
 import { useScene } from '../../context/SceneContext.jsx'
 
 // ─── Aquarium Camera Controller (Zoom Fijo 100%) ───────────────────────────────
@@ -97,49 +96,6 @@ function SpaceCameraController({ pathname }) {
   return null
 }
 
-// ─── Music / Studio Camera Controller ─────────────────────────────────────────
-function MusicCameraController({ pathname }) {
-  useFrame((state, delta) => {
-    const t = state.clock.elapsedTime
-
-    let targetX = 0.0
-    let targetY = 0.4
-    let targetZ = 6.2
-
-    let lookX = 0.0
-    let lookY = -0.2
-    let lookZ = -1.5
-
-    if (pathname === '/sobre-mi') {
-      targetX = -1.2
-      targetY = 0.3
-      targetZ = 5.8
-      lookX = -1.6
-      lookY = -0.1
-    } else if (pathname === '/proyectos') {
-      targetX = 1.2
-      targetY = 0.3
-      targetZ = 5.8
-      lookX = 1.6
-      lookY = -0.1
-    } else if (pathname === '/contacto') {
-      targetX = 0.0
-      targetY = 0.1
-      targetZ = 5.4
-      lookX = 0.0
-      lookY = 0.0
-    }
-
-    const floatX = Math.sin(t * 0.18) * 0.06
-    const floatY = Math.cos(t * 0.14) * 0.04
-
-    const finalTarget = new THREE.Vector3(targetX + floatX, targetY + floatY, targetZ)
-    state.camera.position.lerp(finalTarget, 2.5 * delta)
-    state.camera.lookAt(lookX, lookY, lookZ)
-  })
-  return null
-}
-
 // ─── Global Canvas ──────────────────────────────────────────────────────────
 export default function GlobalCanvas() {
   const { pathname } = useLocation()
@@ -147,7 +103,6 @@ export default function GlobalCanvas() {
 
   const isAquarium = sceneMode === 'aquarium'
   const isSpace = sceneMode === 'space'
-  const isMusic = sceneMode === 'music'
 
   return (
     <div
@@ -157,17 +112,20 @@ export default function GlobalCanvas() {
         left: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: -1,
-        pointerEvents: 'none',
+        zIndex: 0,
+        pointerEvents: 'auto',
         transition: 'opacity 0.6s ease'
       }}
     >
       <Canvas
+        eventSource={typeof document !== 'undefined' ? document.body : undefined}
+        eventPrefix="client"
+        style={{ pointerEvents: 'auto' }}
         dpr={[1, 1.5]}
         performance={{ min: 0.5 }}
         camera={{
-          position: isAquarium ? [0, 0, 8.0] : isSpace ? [0, 2.0, 18.0] : [0, 0.4, 6.2],
-          fov: isAquarium ? 50 : isSpace ? 45 : 52
+          position: isAquarium ? [0, 0, 8.0] : [0, 2.0, 18.0],
+          fov: isAquarium ? 50 : 45
         }}
         gl={{
           antialias: true,
@@ -180,9 +138,9 @@ export default function GlobalCanvas() {
       >
         {isAquarium && (
           <>
-            {/* Fondo del acuario cristalino */}
-            <color attach="background" args={['#0D4F73']} />
-            <fog attach="fog" args={['#0D4F73', 6, 22]} />
+            {/* Fondo del acuario cristalino en Ocean Cyan de alto contraste */}
+            <color attach="background" args={['#0A4D6E']} />
+            <fog attach="fog" args={['#0A4D6E', 6, 24]} />
             <Environment preset="apartment" />
             <AquariumCameraController pathname={pathname} />
             <AquariumScene pathname={pathname} />
@@ -196,15 +154,6 @@ export default function GlobalCanvas() {
             <fog attach="fog" args={['#050813', 35, 140]} />
             <SpaceCameraController pathname={pathname} />
             <OrganicScene pathname={pathname} />
-          </>
-        )}
-
-        {isMusic && (
-          <>
-            {/* Estudio de Grabación Profesional - 100% Nítido sin Fog ni Blur */}
-            <color attach="background" args={['#080D1A']} />
-            <MusicCameraController pathname={pathname} />
-            <MusicScene />
           </>
         )}
       </Canvas>

@@ -15,7 +15,7 @@ export function SceneProvider({ children }) {
   const [sceneMode, setSceneMode] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('portfolio_scene_mode')
-      if (saved === 'space' || saved === 'aquarium' || saved === 'music') return saved
+      if (saved === 'space' || saved === 'aquarium') return saved
     }
     return 'aquarium'
   })
@@ -24,10 +24,13 @@ export function SceneProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem('portfolio_scene_mode', sceneMode)
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', sceneMode)
+    }
   }, [sceneMode])
 
   const toggleSceneMode = () => {
-    setSceneMode((prev) => (prev === 'aquarium' ? 'space' : prev === 'space' ? 'music' : 'aquarium'))
+    setSceneMode((prev) => (prev === 'aquarium' ? 'space' : 'aquarium'))
   }
 
   const zoomIn = () => {

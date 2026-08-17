@@ -1229,10 +1229,10 @@ function AquascapeEnvironment() {
 
   return (
     <group>
-      {/* PARED TRASERA — Fondo cristalino submarino iluminado */}
+      {/* PARED TRASERA — Fondo cristalino submarino en Ocean Cyan */}
       <mesh position={[0, 0, -8]}>
         <planeGeometry args={[32, 20]} />
-        <meshBasicMaterial map={waterBgTex} />
+        <meshBasicMaterial map={waterBgTex} color="#0C5E8A" />
       </mesh>
 
       {/* ARENA BLANCA FINA CON MAPAS PBR Y RELIEVE OPTIMIZADO */}
@@ -1408,10 +1408,10 @@ export default function AquariumScene({ pathname }) {
 
   return (
     <group>
-      {/* ILUMINACIÓN LED AQUASCAPING EQUILIBRADA */}
-      <ambientLight intensity={1.1} color="#B8E8F4" />
-      <directionalLight position={[0, 10, 2]} intensity={2.8} color="#F2FBFF" />
-      <pointLight position={[0, 2, -3]} intensity={1.5} color="#5BC8E8" distance={16} decay={2} />
+      {/* ILUMINACIÓN LED AQUASCAPING EQUILIBRADA EN AZUL PROFUNDO Y CYAN */}
+      <ambientLight intensity={1.0} color="#7DD3FC" />
+      <directionalLight position={[0, 10, 2]} intensity={2.6} color="#E0F2FE" />
+      <pointLight position={[0, 2, -3]} intensity={1.8} color="#00E5FF" distance={16} decay={2} />
 
       <Suspense fallback={<BettaFish />}>
         <FishController />

@@ -9,7 +9,6 @@ export default function SceneSwitch() {
 
   const isAquarium = sceneMode === 'aquarium'
   const isSpace = sceneMode === 'space'
-  const isMusic = sceneMode === 'music'
 
   // Cerrar al hacer clic fuera
   useEffect(() => {
@@ -28,9 +27,8 @@ export default function SceneSwitch() {
   }
 
   const getThemeColor = () => {
-    if (isAquarium) return '#38BDF8'
-    if (isSpace) return '#F472B6'
-    return '#A855F7'
+    if (isAquarium) return '#00E5FF'
+    return '#C084FC'
   }
 
   return (
@@ -142,8 +140,8 @@ export default function SceneSwitch() {
                 fontSize: '0.86rem',
                 fontWeight: isAquarium ? 600 : 400,
                 color: isAquarium ? '#FFFFFF' : 'rgba(255, 255, 255, 0.75)',
-                background: isAquarium ? 'rgba(2, 132, 199, 0.3)' : 'transparent',
-                borderLeft: isAquarium ? '3px solid #38BDF8' : '3px solid transparent',
+                background: isAquarium ? 'rgba(0, 229, 255, 0.25)' : 'transparent',
+                borderLeft: isAquarium ? '3px solid #00E5FF' : '3px solid transparent',
                 transition: 'all 0.2s ease',
                 textAlign: 'left'
               }}
@@ -156,7 +154,7 @@ export default function SceneSwitch() {
               role="menuitem"
             >
               <span>Acuario</span>
-              {isAquarium && <span style={{ color: '#38BDF8', fontSize: '0.8rem' }}>✓</span>}
+              {isAquarium && <span style={{ color: '#00E5FF', fontSize: '0.8rem' }}>✓</span>}
             </button>
 
             {/* Opción 2: Cosmos */}
@@ -173,8 +171,8 @@ export default function SceneSwitch() {
                 fontSize: '0.86rem',
                 fontWeight: isSpace ? 600 : 400,
                 color: isSpace ? '#FFFFFF' : 'rgba(255, 255, 255, 0.75)',
-                background: isSpace ? 'rgba(219, 39, 119, 0.3)' : 'transparent',
-                borderLeft: isSpace ? '3px solid #F472B6' : '3px solid transparent',
+                background: isSpace ? 'rgba(192, 132, 252, 0.28)' : 'transparent',
+                borderLeft: isSpace ? '3px solid #C084FC' : '3px solid transparent',
                 transition: 'all 0.2s ease',
                 textAlign: 'left'
               }}
@@ -187,38 +185,7 @@ export default function SceneSwitch() {
               role="menuitem"
             >
               <span>Cosmos</span>
-              {isSpace && <span style={{ color: '#F472B6', fontSize: '0.8rem' }}>✓</span>}
-            </button>
-
-            {/* Opción 3: Música */}
-            <button
-              onClick={() => selectTheme('music')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                borderRadius: '10px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.86rem',
-                fontWeight: isMusic ? 600 : 400,
-                color: isMusic ? '#FFFFFF' : 'rgba(255, 255, 255, 0.75)',
-                background: isMusic ? 'rgba(124, 58, 237, 0.3)' : 'transparent',
-                borderLeft: isMusic ? '3px solid #A855F7' : '3px solid transparent',
-                transition: 'all 0.2s ease',
-                textAlign: 'left'
-              }}
-              onMouseEnter={(e) => {
-                if (!isMusic) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
-              }}
-              onMouseLeave={(e) => {
-                if (!isMusic) e.currentTarget.style.background = 'transparent'
-              }}
-              role="menuitem"
-            >
-              <span>Música</span>
-              {isMusic && <span style={{ color: '#A855F7', fontSize: '0.8rem' }}>✓</span>}
+              {isSpace && <span style={{ color: '#C084FC', fontSize: '0.8rem' }}>✓</span>}
             </button>
           </motion.div>
         )}

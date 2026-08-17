@@ -73,7 +73,7 @@ export default function ProjectCard({ project, index = 0 }) {
     }
   }, [open, images.length])
 
-  const customAccent = project.accentColor || '#6366F1';
+  const customAccent = (project.accentColor && project.accentColor !== '#6366F1') ? project.accentColor : 'var(--accent)';
 
   return (
     <>
@@ -98,7 +98,7 @@ export default function ProjectCard({ project, index = 0 }) {
               )}
             </div>
             <div className="editorial-item__info">
-              <p className="editorial-item__desc muted">{project.description}</p>
+              <p className="editorial-item__desc">{project.description}</p>
               
               {project.tech?.length ? (
                 <ul className="tags" aria-label="Tecnologías usadas">
@@ -111,7 +111,7 @@ export default function ProjectCard({ project, index = 0 }) {
               <div className="editorial-item__actions" onClick={(e) => e.stopPropagation()}>
                 <button className="btn btn--ghost btn--details" onClick={() => openGallery(0)}>Ver detalles</button>
                 {project.demo && (
-                  <a className="btn btn--ghost" href={project.demo} target="_blank" rel="noreferrer">Visitar sitio</a>
+                  <a className="btn btn--accent btn--visit" href={project.demo} target="_blank" rel="noreferrer">Visitar sitio</a>
                 )}
                 {showRepoLink && (
                   <a className="btn btn--accent" href={repoUrl} target="_blank" rel="noreferrer">{repoLabel}</a>
