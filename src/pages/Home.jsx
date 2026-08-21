@@ -37,8 +37,8 @@ export default function Home() {
         <motion.div className="hero-stats" {...fadeIn(0.6)}>
           {[
             { v: '2+', l: 'Años' },
-            { v: '20+', l: 'Proyectos' },
-            { v: '12+', l: 'Stacks' },
+            { v: '25+', l: 'Proyectos' },
+            { v: '8+', l: 'Certificados' },
           ].map(s => (
             <div key={s.l} className="stat-item">
               <span className="stat-item__v">{s.v}</span>
