@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiMail, FiPhone, FiLinkedin, FiArrowRight, FiSend } from 'react-icons/fi'
+import { FiMail, FiPhone, FiLinkedin, FiArrowRight, FiSend, FiDollarSign } from 'react-icons/fi'
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 40 },
@@ -149,6 +150,22 @@ export default function Contacto() {
             <p style={{ color: '#fff', fontWeight: 600, marginTop: '0.4rem' }}>
               Lunes – Viernes<br />9:00 AM – 6:00 PM (CDMX)
             </p>
+          </div>
+
+          <div style={{ marginTop: '1.5rem', background: 'rgba(0, 229, 255, 0.08)', border: '1px solid var(--accent, #00E5FF)', borderRadius: '14px', padding: '1.2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', fontWeight: 700, fontSize: '0.92rem' }}>
+              <FiDollarSign style={{ color: 'var(--accent, #00E5FF)' }} /> ¿Buscas un presupuesto estimado?
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.3rem', marginBottom: '0.8rem', lineHeight: 1.4 }}>
+              Calcula el costo de tu proyecto en tiempo real según los módulos y tecnologías que necesitas.
+            </p>
+            <Link
+              to="/costos"
+              className="cta-btn"
+              style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', width: '100%', justifyContent: 'center' }}
+            >
+              Ir al Tabulador & Cotizador <FiArrowRight size={14} />
+            </Link>
           </div>
         </motion.div>
       </div>

@@ -1,41 +1,43 @@
-import React, { useState, useEffect } from 'react'
-import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Home from './pages/Home.jsx'
-import SobreMi from './pages/SobreMi.jsx'
-import Proyectos from './pages/Proyectos.jsx'
-import Contacto from './pages/Contacto.jsx'
 import Footer from './components/Footer.jsx'
-import GlobalCanvas from './components/canvas/GlobalCanvas.jsx'
-import SceneSwitch from './components/SceneSwitch.jsx'
-import Login from './pages/Login.jsx'
-import AdminDashboard from './pages/AdminDashboard.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Navbar from './components/Navbar.jsx'
 import SEO from './components/SEO.jsx'
-const navItems = [
-  { to: '/', label: 'Inicio', end: true },
-  { to: '/sobre-mi', label: 'Sobre mí' },
-  { to: '/proyectos', label: 'Proyectos' },
-  { to: '/contacto', label: 'Contáctame' },
-]
 
-function Nav() {
+// Code-splitting for maximum PageSpeed / Performance
+const SobreMi = lazy(() => import('./pages/SobreMi.jsx'))
+const Proyectos = lazy(() => import('./pages/Proyectos.jsx'))
+const Costos = lazy(() => import('./pages/Costos.jsx'))
+const Contacto = lazy(() => import('./pages/Contacto.jsx'))
+const Login = lazy(() => import('./pages/Login.jsx'))
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'))
+const ProtectedRoute = lazy(() => import('./components/ProtectedRoute.jsx'))
+const GlobalCanvas = lazy(() => import('./components/canvas/GlobalCanvas.jsx'))
+
+function DeferredCanvas() {
+  const [shouldRender, setShouldRender] = useState(false)
+
+  useEffect(() => {
+    // Defer 3D Canvas initialization until after critical DOM paint
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        const id = window.requestIdleCallback(() => setShouldRender(true), { timeout: 800 })
+        return () => window.cancelIdleCallback(id)
+      } else {
+        const timer = setTimeout(() => setShouldRender(true), 100)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [])
+
+  if (!shouldRender) return null
+
   return (
-    <header className="nav">
-      <div className="nav__inner">
-        <NavLink to="/" className="brand" aria-label="Inicio">
-          <span style={{ fontSize: '1.2rem' }}>[G]</span>
-        </NavLink>
-        <nav className="nav__links" aria-label="Navegación principal">
-          {navItems.map(({ to, label, end }) => (
-            <NavLink key={to} to={to} end={end} className={({ isActive }) => isActive ? 'active' : ''}>
-              {label}
-            </NavLink>
-          ))}
-          <SceneSwitch />
-        </nav>
-      </div>
-    </header>
+    <Suspense fallback={null}>
+      <GlobalCanvas />
+    </Suspense>
   )
 }
 
@@ -96,11 +98,11 @@ export default function App() {
       {/* Route-aware Dynamic SEO Meta & Titles */}
       <SEO />
 
-      {/* 3D Global Canvas background */}
-      <GlobalCanvas />
+      {/* 3D Global Canvas background (Deferred for instant LCP/FCP) */}
+      <DeferredCanvas />
 
       {/* HTML Overlay Content */}
-      <Nav />
+      <Navbar />
       <main className="main">
         <AnimatePresence mode="wait">
           <motion.div
@@ -110,19 +112,22 @@ export default function App() {
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Routes location={location}>
-              <Route path="/" element={<Home />} />
-              <Route path="/sobre-mi" element={<SobreMi />} />
-              <Route path="/proyectos" element={<Proyectos />} />
-              <Route path="/contacto" element={<Contacto />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/admin" element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={<Home />} />
-            </Routes>
+            <Suspense fallback={<div style={{ minHeight: '60vh' }} />}>
+              <Routes location={location}>
+                <Route path="/" element={<Home />} />
+                <Route path="/sobre-mi" element={<SobreMi />} />
+                <Route path="/proyectos" element={<Proyectos />} />
+                <Route path="/costos" element={<Costos />} />
+                <Route path="/contacto" element={<Contacto />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
@@ -133,4 +138,3 @@ export default function App() {
     </div>
   )
 }
-

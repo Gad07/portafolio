@@ -41,42 +41,33 @@ export default function SceneSwitch() {
         userSelect: 'none'
       }}
     >
-      {/* Opción de menú en el Navbar */}
+      {/* Botón Tema en el Navbar */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         style={{
           display: 'inline-flex',
           alignItems: 'center',
           gap: '6px',
-          color: isOpen ? '#FFFFFF' : 'rgba(255, 255, 255, 0.65)',
-          background: isOpen ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
-          border: 'none',
-          padding: '0.5rem 1.05rem',
+          height: '34px',
+          color: isOpen ? '#FFFFFF' : 'rgba(255, 255, 255, 0.85)',
+          background: isOpen ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.06)',
+          border: isOpen ? '1px solid var(--accent, #00E5FF)' : '1px solid rgba(255, 255, 255, 0.12)',
+          padding: '0 0.85rem',
           borderRadius: '9999px',
-          fontSize: '0.88rem',
-          fontWeight: 500,
+          fontSize: '0.82rem',
+          fontWeight: 600,
           cursor: 'pointer',
           letterSpacing: '0.01em',
-          transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-          outline: 'none'
-        }}
-        onMouseEnter={(e) => {
-          if (!isOpen) {
-            e.currentTarget.style.color = '#FFFFFF'
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isOpen) {
-            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)'
-            e.currentTarget.style.background = 'transparent'
-          }
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+          outline: 'none',
+          whiteSpace: 'nowrap'
         }}
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
         <span>Tema</span>
-        <span style={{ fontSize: '0.68rem', color: getThemeColor(), fontWeight: 700, textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '0.68rem', color: getThemeColor(), fontWeight: 800 }}>
           •
         </span>
         <svg
@@ -91,57 +82,57 @@ export default function SceneSwitch() {
           style={{
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.25s ease',
-            opacity: 0.7
+            opacity: 0.8
           }}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
 
-      {/* Menú Desplegable flotante */}
+      {/* Menú Desplegable flotante - Anclado a la derecha para no desbordar */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -6, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: 'absolute',
               top: 'calc(100% + 8px)',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              minWidth: '150px',
-              background: 'rgba(11, 19, 38, 0.92)',
-              backdropFilter: 'blur(28px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              right: 0,
+              left: 'auto',
+              minWidth: '160px',
+              background: 'rgba(9, 20, 42, 0.96)',
+              backdropFilter: 'blur(28px) saturate(190%)',
+              WebkitBackdropFilter: 'blur(28px) saturate(190%)',
+              border: '1px solid rgba(0, 229, 255, 0.3)',
               borderRadius: '16px',
               padding: '6px',
-              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.45)',
+              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 229, 255, 0.15)',
               zIndex: 1000,
               display: 'flex',
               flexDirection: 'column',
-              gap: '3px'
+              gap: '4px'
             }}
             role="menu"
           >
             {/* Opción 1: Acuario */}
             <button
+              type="button"
               onClick={() => selectTheme('aquarium')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '8px 12px',
+                padding: '9px 12px',
                 borderRadius: '10px',
-                border: 'none',
+                border: isAquarium ? '1px solid rgba(0, 229, 255, 0.4)' : '1px solid transparent',
                 cursor: 'pointer',
-                fontSize: '0.86rem',
-                fontWeight: isAquarium ? 600 : 400,
-                color: isAquarium ? '#FFFFFF' : 'rgba(255, 255, 255, 0.75)',
-                background: isAquarium ? 'rgba(0, 229, 255, 0.25)' : 'transparent',
-                borderLeft: isAquarium ? '3px solid #00E5FF' : '3px solid transparent',
+                fontSize: '0.85rem',
+                fontWeight: isAquarium ? 700 : 500,
+                color: isAquarium ? '#FFFFFF' : 'rgba(255, 255, 255, 0.8)',
+                background: isAquarium ? 'rgba(0, 229, 255, 0.2)' : 'transparent',
                 transition: 'all 0.2s ease',
                 textAlign: 'left'
               }}
@@ -153,26 +144,29 @@ export default function SceneSwitch() {
               }}
               role="menuitem"
             >
-              <span>Acuario</span>
-              {isAquarium && <span style={{ color: '#00E5FF', fontSize: '0.8rem' }}>✓</span>}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00E5FF', display: 'inline-block' }} />
+                <span>Acuario</span>
+              </div>
+              {isAquarium && <span style={{ color: '#00E5FF', fontSize: '0.85rem', fontWeight: 800 }}>✓</span>}
             </button>
 
             {/* Opción 2: Cosmos */}
             <button
+              type="button"
               onClick={() => selectTheme('space')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '8px 12px',
+                padding: '9px 12px',
                 borderRadius: '10px',
-                border: 'none',
+                border: isSpace ? '1px solid rgba(192, 132, 252, 0.4)' : '1px solid transparent',
                 cursor: 'pointer',
-                fontSize: '0.86rem',
-                fontWeight: isSpace ? 600 : 400,
-                color: isSpace ? '#FFFFFF' : 'rgba(255, 255, 255, 0.75)',
-                background: isSpace ? 'rgba(192, 132, 252, 0.28)' : 'transparent',
-                borderLeft: isSpace ? '3px solid #C084FC' : '3px solid transparent',
+                fontSize: '0.85rem',
+                fontWeight: isSpace ? 700 : 500,
+                color: isSpace ? '#FFFFFF' : 'rgba(255, 255, 255, 0.8)',
+                background: isSpace ? 'rgba(192, 132, 252, 0.22)' : 'transparent',
                 transition: 'all 0.2s ease',
                 textAlign: 'left'
               }}
@@ -184,8 +178,11 @@ export default function SceneSwitch() {
               }}
               role="menuitem"
             >
-              <span>Cosmos</span>
-              {isSpace && <span style={{ color: '#C084FC', fontSize: '0.8rem' }}>✓</span>}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#C084FC', display: 'inline-block' }} />
+                <span>Cosmos</span>
+              </div>
+              {isSpace && <span style={{ color: '#C084FC', fontSize: '0.85rem', fontWeight: 800 }}>✓</span>}
             </button>
           </motion.div>
         )}

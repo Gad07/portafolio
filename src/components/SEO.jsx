@@ -14,6 +14,10 @@ const routeMetadata = {
     title: 'Proyectos & Portafolio | Gadiel Palma',
     description: 'Explora proyectos destacados, plataformas web de alta conversión, CMS a la medida y aplicaciones desarrolladas por Gadiel Palma.',
   },
+  '/costos': {
+    title: 'Tabulador de Costos & Cotizador | Gadiel Palma',
+    description: 'Calcula el presupuesto estimado para tu proyecto de desarrollo web, landing pages, plataformas full-stack o sistemas a la medida con Gadiel Palma.',
+  },
   '/contacto': {
     title: 'Contacto | Gadiel Palma — Desarrollador Full Stack',
     description: 'Ponte en contacto con Gadiel Palma para colaboraciones, desarrollo de software, consultoría o nuevos proyectos.',

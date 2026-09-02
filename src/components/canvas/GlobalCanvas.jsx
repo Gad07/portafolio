@@ -1,6 +1,5 @@
 import React from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment } from '@react-three/drei'
 import { useLocation } from 'react-router-dom'
 import * as THREE from 'three'
 import AquariumScene from './AquariumScene.jsx'
@@ -141,7 +140,6 @@ export default function GlobalCanvas() {
             {/* Fondo del acuario cristalino en Ocean Cyan de alto contraste */}
             <color attach="background" args={['#0A4D6E']} />
             <fog attach="fog" args={['#0A4D6E', 6, 24]} />
-            <Environment preset="apartment" />
             <AquariumCameraController pathname={pathname} />
             <AquariumScene pathname={pathname} />
           </>

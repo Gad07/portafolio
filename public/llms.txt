@@ -1,0 +1,16 @@
+# Gadiel Palma - Portafolio & Software Engineer
+
+> Ingeniero de Software y Desarrollador Web Full Stack especializado en Next.js, React, TypeScript, Laravel, PostgreSQL y arquitecturas de alto rendimiento.
+
+## Información Principal
+
+- [Inicio](https://gadielpalma.dev/): Portafolio principal y presentación interactiva.
+- [Sobre Mí](https://gadielpalma.dev/sobre-mi): Trayectoria profesional (SELOASA, Grupo LET, Emerson), certificaciones y stack tecnológico.
+- [Proyectos](https://gadielpalma.dev/proyectos): Catálogo de plataformas web, sistemas de gestión y aplicaciones a la medida.
+- [Costos & Cotizador](https://gadielpalma.dev/costos): Tabulador de inversión y calculadora interactiva de presupuestos para proyectos.
+- [Contacto](https://gadielpalma.dev/contacto): Formulario y vías de contacto profesional.
+
+## Stack Tecnológico
+- **Frontend**: Next.js, React, TypeScript, Three.js, CSS3, Tailwind
+- **Backend & Bases de Datos**: Laravel, PHP, Node.js, Python, PostgreSQL, MySQL, Supabase, Firebase
+- **DevOps & Cloud**: Docker, Netlify, Hostinger, Git/GitHub
