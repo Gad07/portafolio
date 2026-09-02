@@ -11,6 +11,7 @@ import SceneSwitch from './components/SceneSwitch.jsx'
 import Login from './pages/Login.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import SEO from './components/SEO.jsx'
 const navItems = [
   { to: '/', label: 'Inicio', end: true },
   { to: '/sobre-mi', label: 'Sobre mí' },
@@ -92,6 +93,9 @@ export default function App() {
   const location = useLocation()
   return (
     <div className="app">
+      {/* Route-aware Dynamic SEO Meta & Titles */}
+      <SEO />
+
       {/* 3D Global Canvas background */}
       <GlobalCanvas />
 

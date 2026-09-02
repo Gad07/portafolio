@@ -1,0 +1,27 @@
+{
+  "name": "Gadiel Palma | Ingeniero de Software & Full Stack Developer",
+  "short_name": "Gadiel Palma",
+  "description": "Portafolio profesional de Gadiel Palma. Desarrollador Web Full Stack e Ingeniero de Software.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1d",
+  "theme_color": "#0a0f1d",
+  "icons": [
+    {
+      "src": "/favicon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
