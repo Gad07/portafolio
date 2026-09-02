@@ -8,13 +8,21 @@
     <meta name="google-site-verification" content="VnYK93AiBGIHqyQ5fbEGc4xOVkpJMo9ty_ZLkPpF1UQ" />
 
     <!-- Google tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2JY2K4NWY9"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9HWEW4X98B"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
       gtag('js', new Date());
 
-      gtag('config', 'G-2JY2K4NWY9');
+      // Propiedad de Google Analytics para Firebase (Portafolio)
+      gtag('config', 'G-9HWEW4X98B', {
+        send_page_view: true
+      });
+      // Propiedad GA4 secundaria
+      gtag('config', 'G-2JY2K4NWY9', {
+        send_page_view: true
+      });
     </script>
 
     <!-- Primary Title & Meta Description for Google Search -->

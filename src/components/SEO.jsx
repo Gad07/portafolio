@@ -68,11 +68,19 @@ export default function SEO() {
     }
 
     // Google Analytics 4 (GA4) Page View Tracking for SPAs
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'page_view', {
+    const gtagFn = window.gtag || (typeof window !== 'undefined' && window.dataLayer ? (...args) => window.dataLayer.push(args) : null)
+    if (typeof gtagFn === 'function') {
+      gtagFn('event', 'page_view', {
         page_path: location.pathname,
         page_title: meta.title,
         page_location: window.location.href,
+        send_to: 'G-9HWEW4X98B',
+      })
+      gtagFn('event', 'page_view', {
+        page_path: location.pathname,
+        page_title: meta.title,
+        page_location: window.location.href,
+        send_to: 'G-2JY2K4NWY9',
       })
     }
   }, [location.pathname])
