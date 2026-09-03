@@ -89,7 +89,10 @@ export default function Contacto() {
         <motion.form
           className="contact-form glass-card"
           onSubmit={handleSubmit}
-          {...fadeUp(0.1)}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           <h2 className="contact-form__title">Envíame un mensaje</h2>
           <p style={{ color: 'var(--muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>
@@ -133,7 +136,13 @@ export default function Contacto() {
         </motion.form>
 
         {/* Servicios */}
-        <motion.div className="contact-services glass-card" {...fadeUp(0.2)}>
+        <motion.div
+          className="contact-services glass-card"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h3 className="contact-services__title">¿En qué puedo ayudarte?</h3>
           <ul className="services-list">
             {services.map(s => (

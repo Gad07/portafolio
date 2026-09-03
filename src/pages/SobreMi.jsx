@@ -144,21 +144,20 @@ export default function SobreMi() {
   return (
     <div className="about-page">
 
-      {/* ── Hero: Dos columnas ── */}
+      {/* ── Hero: estilo contacto (título gigante + subtítulo) ── */}
       <section className="about-hero">
         <div className="about-hero__grid">
           <motion.div {...fadeUp(0.1)} className="about-hero__title-col">
-            <h1 className="display-title" style={{ fontSize: 'clamp(2.5rem, 8vw, 7rem)', margin: 0, lineHeight: 1 }}>
+            <h1 className="display-title" style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', margin: 0, lineHeight: 1 }}>
               Sobre<br />
               <span className="accent-stroke">mí.</span>
             </h1>
           </motion.div>
           <motion.div {...fadeUp(0.2)} className="about-hero__text-col">
-            <p className="display-sub" style={{ margin: 0 }}>
-              Ingeniero en Software por la Universidad Autónoma del Estado de México, especializado en desarrollo web full stack, automatización de procesos operativos y diseño de arquitecturas digitales de alto rendimiento.
-            </p>
-            <p className="display-sub" style={{ marginTop: '1.5rem', marginBottom: 0 }}>
-              Diseño e implemento plataformas web escalables, paneles de administración autónomos (CMS a la medida), motores de agendamiento B2B y sistemas de gestión interna utilizando Next.js, TypeScript, Laravel y PostgreSQL. Transformo requerimientos complejos en herramientas ágiles, seguras y de alta conversión que optimizan tiempos, reducen costos operacionales y empoderan al usuario final.
+            <p className="display-sub" style={{ textAlign: 'left', marginTop: '1.5rem' }}>
+              Ingeniero en Software por la Universidad Autónoma del Estado de México.
+              Especializado en desarrollo web full stack, automatización de procesos
+              y arquitecturas digitales de alto rendimiento.
             </p>
           </motion.div>
         </div>

@@ -337,23 +337,28 @@ export default function Costos() {
   }
 
   return (
-    <div className="costs-page container" style={{ paddingTop: '5.5rem', paddingBottom: '6rem' }}>
+    <div className="costs-page container" style={{ paddingBottom: '6rem' }}>
       
       {/* ── HEADER / HERO COMERCIAL ── */}
-      <section className="costs-hero" style={{ textAlign: 'center', maxWidth: '880px', margin: '0 auto 4rem auto' }}>
-        <motion.div {...fadeUp(0.1)}>
-          <span className="section-eyebrow">Tabulador Oficial 2026</span>
-          <h1 className="display-title" style={{ fontSize: 'clamp(2.3rem, 6vw, 4.4rem)', lineHeight: 1.1, marginBottom: '1.2rem' }}>
+      <section className="costs-hero">
+        <motion.div className="costs-hero__title-content" {...fadeUp(0.1)}>
+          <h1 className="display-title costs-hero__title">
             Servicios digitales &<br />
             <span className="accent-stroke">software a la medida.</span>
           </h1>
-          <p className="display-sub" style={{ margin: '0 auto', fontSize: '1.05rem', color: 'var(--muted)', maxWidth: '720px' }}>
+        </motion.div>
+
+        <motion.div className="costs-hero__description" {...fadeUp(0.2)}>
+          <p className="display-sub" style={{ textAlign: 'left', maxWidth: '720px' }}>
             Estructura comercial formal con costos base, alcances y ejemplos prácticos para todo tipo de desarrollos digitales.
           </p>
         </motion.div>
 
+        </section>
+
         {/* Selector de Moneda */}
-        <motion.div {...fadeUp(0.2)} style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border)', padding: '0.35rem 0.5rem', borderRadius: '50px', marginTop: '2rem', gap: '0.4rem' }}>
+        <motion.div className="costs-currency-bar" {...fadeUp(0.2)}>
+          <div className="costs-hero__controls">
           <button
             type="button"
             onClick={() => setCurrency('MXN')}
@@ -388,8 +393,8 @@ export default function Costos() {
           >
             🇺🇸 USD (Dólares)
           </button>
-        </motion.div>
-      </section>
+        </div>
+      </motion.div>
 
       {/* ── TABULADOR OFICIAL 2026 (TABLA / CARDS) ── */}
       <section style={{ marginBottom: '6rem' }}>

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '../firebase';
+import { GITHUB_USERNAME } from '../shared/config';
 import { 
   onAuthStateChanged, 
   signInWithPopup, 
@@ -25,7 +26,7 @@ export function AuthProvider({ children }) {
     const githubUsername = result._tokenResponse.screenName || result.user.reloadUserInfo.screenName;
     
     // Validar que solo el usuario permitido pueda entrar al admin
-    if (githubUsername && githubUsername.toLowerCase() !== 'gad07') {
+    if (githubUsername && githubUsername.toLowerCase() !== GITHUB_USERNAME) {
       await logout();
       throw new Error('Acceso denegado. No eres el administrador.');
     }

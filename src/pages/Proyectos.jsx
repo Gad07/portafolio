@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import ProjectCard from '../components/ProjectCard.jsx'
+import Reveal from '../components/Reveal.jsx'
 import { db } from '../firebase'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 
@@ -47,13 +48,16 @@ export default function Proyectos() {
   return (
     <div className="projects-page">
       <div className="projects-hero">
-        <motion.div {...fadeUp(0.1)} style={{ maxWidth: '800px' }}>
-          <h1 className="display-title" style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', lineHeight: 1 }}>
-            Casos de<br />
-            <span className="accent-stroke">estudio.</span>
+        <motion.div className="projects-hero__title-content" {...fadeUp(0.1)}>
+          <h1 className="display-title projects-hero__title">
+            Proyectos<br />
+            <span className="accent-stroke">destacados.</span>
           </h1>
-          <p className="display-sub" style={{ textAlign: 'left', marginTop: '1.5rem', marginBottom: '2rem' }}>
-            Selección de plataformas, herramientas y prototipos. Código limpio y enfoque en la experiencia de usuario.
+        </motion.div>
+
+        <motion.div className="projects-hero__description" {...fadeUp(0.2)}>
+          <p className="display-sub" style={{ textAlign: 'left' }}>
+            Proyectos realizados para resolver necesidades reales con plataformas, herramientas y productos digitales enfocados en resultados.
           </p>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             {loading && (<p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>Cargando ecosistema…</p>)}
@@ -64,7 +68,8 @@ export default function Proyectos() {
 
       <section className="container" style={{ paddingBottom: '8rem', paddingTop: '4rem' }}>
         {/* Pestañas de Filtrado por Categoría (Switches Estilizados) */}
-        <div className="category-filter-bar">
+        <Reveal y={20}>
+          <div className="category-filter-bar">
           {categories.map(cat => {
             const isActive = activeCategory === cat;
             const count = cat === 'Todos' 
@@ -91,16 +96,19 @@ export default function Proyectos() {
               </button>
             );
           })}
-        </div>
+          </div>
+        </Reveal>
 
-        <div className="editorial-list">
-          {filteredItems.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} />
-          ))}
-          {!loading && filteredItems.length === 0 && (
-            <p style={{ color: 'var(--muted)', padding: '2rem 0' }}>No hay proyectos disponibles en la categoría "{activeCategory}".</p>
-          )}
-        </div>
+        <Reveal y={24} delay={0.05}>
+          <div className="editorial-list">
+            {filteredItems.map((p, i) => (
+              <ProjectCard key={p.id} project={p} index={i} />
+            ))}
+            {!loading && filteredItems.length === 0 && (
+              <p style={{ color: 'var(--muted)', padding: '2rem 0' }}>No hay proyectos disponibles en la categoría "{activeCategory}".</p>
+            )}
+          </div>
+        </Reveal>
       </section>
     </div>
   )

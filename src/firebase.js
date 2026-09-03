@@ -3,17 +3,21 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Configuración cargada desde variables de entorno (ver .env.example).
+// En producción usa las variables reales de Netlify/Vercel.
 const firebaseConfig = {
-  apiKey: "AIzaSyDXJpgzb2E2oS_JfrkX3knCv8aVVkhiqho",
-  authDomain: "portafolio-gadiel.firebaseapp.com",
-  projectId: "portafolio-gadiel",
-  storageBucket: "portafolio-gadiel.firebasestorage.app",
-  messagingSenderId: "940229885891",
-  appId: "1:940229885891:web:3ceae4a9ed283460e80776",
-  measurementId: "G-9HWEW4X98B"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
+
+if (!firebaseConfig.apiKey) {
+  console.error('Firebase no está configurado. Copia .env.example a .env y llena los valores.');
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
+import { GITHUB_USERNAME, GITHUB_TOKEN as CONFIG_GITHUB_TOKEN } from '../shared/config';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 export default function AdminDashboard() {
@@ -104,10 +105,11 @@ export default function AdminDashboard() {
     }
   }
 
-  // Constante con el nombre de usuario de github
-  const GITHUB_USERNAME = 'Gad07';
+  // Nombre de usuario de github (centralizado en shared/config.js)
+  // Nota: en producción evita guardar tokens en localStorage (riesgo XSS).
+  // Mejor usa una función serverless que mantenga el token en el servidor.
+  const [githubToken, setGithubToken] = useState(() => localStorage.getItem('github_token') || CONFIG_GITHUB_TOKEN || '');
 
-  // Obtener proyectos actuales de Firebase ordenados por posición
   async function fetchMyProjects() {
     try {
       const querySnapshot = await getDocs(collection(db, 'projects'));
@@ -125,7 +127,6 @@ export default function AdminDashboard() {
     }
   }
 
-  const [githubToken, setGithubToken] = useState(() => localStorage.getItem('github_token') || import.meta.env.VITE_GITHUB_TOKEN || '');
   const [showTokenInput, setShowTokenInput] = useState(false);
 
   function saveToken(token) {
@@ -371,33 +372,28 @@ export default function AdminDashboard() {
         githubUrl: formData.repo || '' 
       };
 
-      console.log("Datos a guardar:", projectData);
-      
       // 2. Crear un timeout para que no se quede colgado
       const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000));
-      
+
       if (editingProjectId) {
-        console.log("Modo Edición - Actualizando documento...");
         await Promise.race([
           updateDoc(doc(db, 'projects', editingProjectId), projectData),
           timeout
         ]);
         setMyProjects(myProjects.map(p => p.id === editingProjectId ? { ...p, ...projectData } : p));
       } else {
-        console.log("Modo Creación - Añadiendo documento...");
         projectData.createdAt = serverTimestamp();
         const docRef = await Promise.race([
           addDoc(collection(db, 'projects'), projectData),
           timeout
         ]);
         setMyProjects([...myProjects, { id: docRef.id, ...projectData }]);
-        
+
         if (selectedRepo) {
           setGithubRepos(githubRepos.filter(r => r.id !== selectedRepo.id));
         }
       }
-      
-      console.log("Guardado con éxito");
+
       setIsModalOpen(false);
     } catch (err) {
       console.error("Error al guardar proyecto:", err);

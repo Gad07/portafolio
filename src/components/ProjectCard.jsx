@@ -92,7 +92,7 @@ export default function ProjectCard({ project, index = 0 }) {
           <div className="editorial-item__inner">
             <div className="editorial-item__image">
               {project.image ? (
-                <img src={project.image} alt={project.title} />
+                <img src={project.image} alt={project.title} loading="lazy" decoding="async" />
               ) : (
                 <div className="editorial-item__placeholder">Sin imagen</div>
               )}

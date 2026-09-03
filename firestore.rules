@@ -1,0 +1,50 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────
+//  REGLAS DE SEGURIDAD DE FIRESTORE
+// ─────────────────────────────────────────────────────────────────
+//  IMPORTANTE: Estas reglas son la ÚNICA seguridad real de tu base
+//  de datos. Las claves de Firebase en un SPA son públicas, así que
+//  si estas reglas no están bien configuradas, CUALQUIERA puede leer
+//  o borrar tus proyectos.
+//
+//  CÓMO ACTIVARLAS (toma 2 min):
+//    1. instala el CLI de Firebase:   npm i -g firebase-tools
+//    2. haz login:                     firebase login
+//    3. selecciona tu proyecto:        firebase use portafolio-gadiel
+//    4. despliega las reglas:          firebase deploy --only firestore:rules
+//
+//  IMPORTANTE: reemplaza el UID de ejemplo abajo por TU UID real.
+//  Para obtener tu UID: inicia sesión en /login desde tu navegador y
+//  abre la consola del navegador → `localStorage` o revisa Firebase
+//  Console → Authentication → Users → tu usuario → "User UID".
+//
+//  Regla general: TODO negado por defecto. Solo `isOwner()` accede.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── REEMPLAZA ESTE UID POR EL TUYO ──
+    // Utiliza una función para centralizar la comprobación del dueño.
+    // Nota: las reglas no pueden leer el screenName de GitHub, así que
+    // se valida por UID de Firebase Auth (que es único e inmutable).
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'REEMPLAZA_CON_TU_UID';
+    }
+
+    // Colección de proyectos públicos (solo lectura para visitantes,
+    // lectura/escritura únicamente para el administrador dueño).
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create, update, delete: if isOwner();
+    }
+
+    // Denegación de seguridad: cualquier otra ruta NO definida arriba
+    // es rechazada por defecto en Firestore (no hace falta match),
+    // pero añadimos una explícita para dejar claro el comportamiento
+    // y cubrir colecciones no previstas.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

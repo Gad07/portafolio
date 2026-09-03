@@ -5,6 +5,8 @@ import Home from './pages/Home.jsx'
 import Footer from './components/Footer.jsx'
 import Navbar from './components/Navbar.jsx'
 import SEO from './components/SEO.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
+import PageSkeleton from './components/PageSkeleton.jsx'
 
 // Code-splitting for maximum PageSpeed / Performance
 const SobreMi = lazy(() => import('./pages/SobreMi.jsx'))
@@ -112,22 +114,24 @@ export default function App() {
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Suspense fallback={<div style={{ minHeight: '60vh' }} />}>
-              <Routes location={location}>
-                <Route path="/" element={<Home />} />
-                <Route path="/sobre-mi" element={<SobreMi />} />
-                <Route path="/proyectos" element={<Proyectos />} />
-                <Route path="/costos" element={<Costos />} />
-                <Route path="/contacto" element={<Contacto />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="*" element={<Home />} />
-              </Routes>
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<PageSkeleton />}>
+                <Routes location={location}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/sobre-mi" element={<SobreMi />} />
+                  <Route path="/proyectos" element={<Proyectos />} />
+                  <Route path="/costos" element={<Costos />} />
+                  <Route path="/contacto" element={<Contacto />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/admin" element={
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="*" element={<Home />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </motion.div>
         </AnimatePresence>
       </main>
