@@ -433,6 +433,51 @@ export default function SobreMi() {
 
       </section>
 
+      {/* ── Call to Action Final ── */}
+      <section className="container" style={{ paddingTop: '4rem', paddingBottom: '6rem' }}>
+        <motion.div
+          className="glass-card"
+          style={{
+            padding: '3rem 2rem',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1.2rem',
+            borderRadius: '24px',
+            border: '1px solid var(--border)',
+            background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.06) 0%, rgba(11, 25, 45, 0.8) 100%)'
+          }}
+          {...fadeUp(0.15)}
+        >
+          <span className="section-eyebrow">¿Tienes un proyecto en mente?</span>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', color: '#fff', margin: 0, fontWeight: 800, letterSpacing: '-0.02em' }}>
+            Construyamos algo extraordinario juntos.
+          </h2>
+          <p style={{ color: 'var(--muted)', maxWidth: '620px', lineHeight: 1.6, margin: 0 }}>
+            Disponible para roles de Ingeniería de Software Full-Stack, liderazgo técnico y consultoría para proyectos de alto impacto.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginTop: '0.8rem' }}>
+            <a
+              href="https://wa.me/527223659263?text=Hola%20Gadiel,%20vi%20tu%20perfil%20y%20me%20gustar%C3%ADa%20conversar%20sobre%20un%20proyecto."
+              target="_blank"
+              rel="noreferrer"
+              className="cta-btn"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem 1.8rem' }}
+            >
+              Iniciar Conversación
+            </a>
+            <a
+              href="/proyectos"
+              className="ghost-btn"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem 1.8rem' }}
+            >
+              Ver Proyectos Destacados
+            </a>
+          </div>
+        </motion.div>
+      </section>
+
     </div>
   )
 }

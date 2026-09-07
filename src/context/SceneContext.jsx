@@ -66,4 +66,3 @@ export function SceneProvider({ children }) {
 export function useScene() {
   return useContext(SceneContext)
 }
-

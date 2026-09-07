@@ -89,7 +89,7 @@ export default function SceneSwitch() {
         </svg>
       </button>
 
-      {/* Menú Desplegable flotante - Anclado a la derecha para no desbordar */}
+      {/* Menú Desplegable flotante */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

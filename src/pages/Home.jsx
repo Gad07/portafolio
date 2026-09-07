@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { FiArrowRight, FiGithub, FiLinkedin } from 'react-icons/fi'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FiArrowRight, FiGithub, FiLinkedin, FiCopy, FiCheck } from 'react-icons/fi'
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 40 },
@@ -10,6 +10,14 @@ const fadeIn = (delay = 0) => ({
 })
 
 export default function Home() {
+  const [copied, setCopied] = useState(false)
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText('gadpalma7@gmail.com')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2200)
+  }
+
   return (
     <section className="home-page">
       {/* ── Hero: texto anclado a la izquierda inferior, 3D llena el resto ── */}
@@ -56,9 +64,29 @@ export default function Home() {
             <FiLinkedin size={20} />
           </a>
           <span className="hero-socials__line" />
-          <span className="hero-socials__label">gadpalma7@gmail.com</span>
+          
+          <button
+            type="button"
+            onClick={copyEmail}
+            className="hero-socials__copy-btn"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'inherit',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              font: 'inherit',
+              padding: 0
+            }}
+            title="Copiar correo"
+          >
+            <span className="hero-socials__label">gadpalma7@gmail.com</span>
+            {copied ? <FiCheck size={14} style={{ color: '#34D399' }} /> : <FiCopy size={13} style={{ opacity: 0.6 }} />}
+          </button>
         </motion.div>
       </div>
-    </section >
+    </section>
   )
 }

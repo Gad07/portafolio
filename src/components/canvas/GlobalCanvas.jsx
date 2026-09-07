@@ -117,14 +117,17 @@ export default function GlobalCanvas() {
       }}
     >
       <Canvas
+        key={sceneMode}
         eventSource={typeof document !== 'undefined' ? document.body : undefined}
         eventPrefix="client"
         style={{ pointerEvents: 'auto' }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         performance={{ min: 0.5 }}
         camera={{
           position: isAquarium ? [0, 0, 8.0] : [0, 2.0, 18.0],
-          fov: isAquarium ? 50 : 45
+          fov: isAquarium ? 50 : 45,
+          near: 0.1,
+          far: 1000
         }}
         gl={{
           antialias: true,
@@ -132,7 +135,7 @@ export default function GlobalCanvas() {
           powerPreference: 'high-performance',
           stencil: false,
           depth: true,
-          precision: 'mediump'
+          precision: 'highp'
         }}
       >
         {isAquarium && (

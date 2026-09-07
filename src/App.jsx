@@ -7,6 +7,7 @@ import Navbar from './components/Navbar.jsx'
 import SEO from './components/SEO.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import PageSkeleton from './components/PageSkeleton.jsx'
+import FloatingContact from './components/FloatingContact.jsx'
 
 // Code-splitting for maximum PageSpeed / Performance
 const SobreMi = lazy(() => import('./pages/SobreMi.jsx'))
@@ -139,6 +140,9 @@ export default function App() {
 
       {/* Easter Egg Toast Notification System */}
       <EasterEggToast />
+
+      {/* Floating Quick WhatsApp & Copy Contact */}
+      <FloatingContact />
     </div>
   )
 }
