@@ -19,8 +19,7 @@ import {
   FiServer,
   FiDatabase,
   FiSearch,
-  FiGlobe,
-  FiCreditCard
+  FiGlobe
 } from 'react-icons/fi'
 
 const fadeUp = (delay = 0) => ({

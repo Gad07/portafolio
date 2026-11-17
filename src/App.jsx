@@ -13,6 +13,7 @@ import FloatingContact from './components/FloatingContact.jsx'
 const SobreMi = lazy(() => import('./pages/SobreMi.jsx'))
 const Proyectos = lazy(() => import('./pages/Proyectos.jsx'))
 const Costos = lazy(() => import('./pages/Costos.jsx'))
+const Pagos = lazy(() => import('./pages/Pagos.jsx'))
 const Contacto = lazy(() => import('./pages/Contacto.jsx'))
 const Login = lazy(() => import('./pages/Login.jsx'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'))
@@ -96,17 +97,18 @@ function EasterEggToast() {
 
 export default function App() {
   const location = useLocation()
+  const isAdmin = location.pathname.startsWith('/admin')
   return (
-    <div className="app">
+    <div className={`app ${isAdmin ? 'app--admin' : ''}`} style={isAdmin ? { pointerEvents: 'auto' } : undefined}>
       {/* Route-aware Dynamic SEO Meta & Titles */}
       <SEO />
 
       {/* 3D Global Canvas background (Deferred for instant LCP/FCP) */}
-      <DeferredCanvas />
+      {!isAdmin && <DeferredCanvas />}
 
       {/* HTML Overlay Content */}
-      <Navbar />
-      <main className="main">
+      {!isAdmin && <Navbar />}
+      <main className={`main ${isAdmin ? 'main--admin' : ''}`} style={isAdmin ? { pointerEvents: 'auto' } : undefined}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -122,6 +124,7 @@ export default function App() {
                   <Route path="/sobre-mi" element={<SobreMi />} />
                   <Route path="/proyectos" element={<Proyectos />} />
                   <Route path="/costos" element={<Costos />} />
+                  <Route path="/pagos" element={<Pagos />} />
                   <Route path="/contacto" element={<Contacto />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/admin" element={
@@ -136,13 +139,11 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </main>
-      <Footer />
+      {!isAdmin && <Footer />}
 
-      {/* Easter Egg Toast Notification System */}
+      {/* Floating Interactive Widget & Toast */}
+      {!isAdmin && <FloatingContact />}
       <EasterEggToast />
-
-      {/* Floating Quick WhatsApp & Copy Contact */}
-      <FloatingContact />
     </div>
   )
 }

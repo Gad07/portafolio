@@ -121,8 +121,8 @@ export default function GlobalCanvas() {
         eventSource={typeof document !== 'undefined' ? document.body : undefined}
         eventPrefix="client"
         style={{ pointerEvents: 'auto' }}
-        dpr={[1, 2]}
-        performance={{ min: 0.5 }}
+        dpr={[1, 1.35]}
+        performance={{ min: 0.6 }}
         camera={{
           position: isAquarium ? [0, 0, 8.0] : [0, 2.0, 18.0],
           fov: isAquarium ? 50 : 45,
@@ -135,7 +135,7 @@ export default function GlobalCanvas() {
           powerPreference: 'high-performance',
           stencil: false,
           depth: true,
-          precision: 'highp'
+          precision: 'mediump'
         }}
       >
         {isAquarium && (

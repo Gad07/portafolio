@@ -38,7 +38,8 @@ export default function SceneSwitch() {
         position: 'relative',
         display: 'inline-flex',
         alignItems: 'center',
-        userSelect: 'none'
+        userSelect: 'none',
+        flexShrink: 0
       }}
     >
       {/* Botón Tema en el Navbar */}

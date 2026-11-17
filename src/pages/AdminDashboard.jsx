@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { GITHUB_USERNAME, GITHUB_TOKEN as CONFIG_GITHUB_TOKEN } from '../shared/config';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import QuotesManager from '../components/admin/QuotesManager';
+import ContractsManager from '../components/admin/ContractsManager';
+import { FiLayers, FiFileText, FiShield } from 'react-icons/fi';
 
 export default function AdminDashboard() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('projects'); // 'projects' | 'quotes' | 'contracts'
+  const [quoteForContract, setQuoteForContract] = useState(null);
+
+  const handleGenerateContract = (quote) => {
+    setQuoteForContract(quote);
+    setActiveTab('contracts');
+  };
+
   const [githubRepos, setGithubRepos] = useState([]);
   const [myProjects, setMyProjects] = useState([]);
   const [loadingRepos, setLoadingRepos] = useState(true);
@@ -412,7 +423,7 @@ export default function AdminDashboard() {
   const paginatedRepos = githubRepos.slice(startIndex, startIndex + reposPerPage);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', padding: '2rem 1rem' }}>
+    <div className="admin-dashboard" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', padding: '2rem 1rem', pointerEvents: 'auto' }}>
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Header Dashboard */}
@@ -422,7 +433,8 @@ export default function AdminDashboard() {
             <p className="muted" style={{ fontSize: '0.9rem' }}>Gestiona tus casos de estudio y sincroniza proyectos desde GitHub.</p>
           </div>
           
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Link to="/" className="btn btn--ghost" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>🌐 Ver Portafolio</Link>
             <span className="chip" style={{ fontSize: '0.85rem' }}>👤 {currentUser?.email}</span>
             <button onClick={handleLogout} className="btn btn--ghost" style={{ fontSize: '0.85rem' }}>
               Cerrar Sesión
@@ -430,8 +442,49 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Layout Bento: 2 Columnas */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+        {/* Navigation Tabs del Admin */}
+        <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setActiveTab('projects')}
+            className={`btn ${activeTab === 'projects' ? 'btn--accent' : 'btn--ghost'}`}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', fontSize: '0.9rem', borderRadius: '10px' }}
+          >
+            <FiLayers /> Proyectos & GitHub
+          </button>
+
+          <button
+            onClick={() => setActiveTab('quotes')}
+            className={`btn ${activeTab === 'quotes' ? 'btn--accent' : 'btn--ghost'}`}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', fontSize: '0.9rem', borderRadius: '10px' }}
+          >
+            <FiFileText /> Generador de Cotizaciones
+          </button>
+
+          <button
+            onClick={() => setActiveTab('contracts')}
+            className={`btn ${activeTab === 'contracts' ? 'btn--accent' : 'btn--ghost'}`}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', fontSize: '0.9rem', borderRadius: '10px' }}
+          >
+            <FiShield /> Generador de Contratos
+          </button>
+        </div>
+
+        {/* Apartado 1: Cotizaciones */}
+        {activeTab === 'quotes' && (
+          <QuotesManager onGenerateContract={handleGenerateContract} />
+        )}
+
+        {/* Apartado 2: Contratos */}
+        {activeTab === 'contracts' && (
+          <ContractsManager
+            incomingQuote={quoteForContract}
+            onClearIncomingQuote={() => setQuoteForContract(null)}
+          />
+        )}
+
+        {/* Apartado Original: Proyectos & GitHub */}
+        {activeTab === 'projects' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
           
           {/* Columna Izquierda: Mis Proyectos */}
           <div className="glass-card bento-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -648,6 +701,7 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* Modal de Configuración */}

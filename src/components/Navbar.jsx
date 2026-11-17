@@ -63,13 +63,14 @@ export default function Navbar() {
                 end={end}
                 className={({ isActive }) => (isActive ? 'active' : '')}
               >
-                {label}
+                <span>{label}</span>
               </NavLink>
             ))}
+
             <SceneSwitch />
           </nav>
 
-          {/* Mobile Right Controls: SceneSwitch Label ("Tema • ⌄") & Hamburger Toggle */}
+          {/* Mobile Right Controls: SceneSwitch & Hamburguesa */}
           <div className="mobile-nav-controls">
             <SceneSwitch />
             <button

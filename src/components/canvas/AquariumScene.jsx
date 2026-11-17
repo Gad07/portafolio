@@ -223,7 +223,7 @@ function createRockTexture() {
   }
 
   // Textura granulada de grano fino
-  for (let i = 0; i < 8000; i++) {
+  for (let i = 0; i < 800; i++) {
     const x = Math.random() * 512, y = Math.random() * 512
     const r = 0.3 + Math.random() * 1.2
     const s = 28 + Math.floor(Math.random() * 30)
@@ -291,7 +291,7 @@ function createMossTexture() {
   const ctx = c.getContext('2d')
   ctx.fillStyle = '#175800'; ctx.fillRect(0, 0, 256, 256)
   const shades = ['#2ECC11', '#1DA800', '#159000', '#0D6B00', '#3DFF15', '#28A800', '#12730A']
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 1000; i++) {
     const x = Math.random() * 256, y = Math.random() * 256, r = 0.3 + Math.random() * 2.0
     ctx.fillStyle = shades[Math.floor(Math.random() * shades.length)]
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
@@ -544,15 +544,14 @@ function BettaFish() {
   )
 
   const finMat = (
-    <meshPhysicalMaterial
+    <meshStandardMaterial
       map={finTex}
-      transmission={0.60}
       transparent
-      opacity={0.9}
-      roughness={0.1}
+      opacity={0.85}
+      roughness={0.2}
       metalness={0.0}
       emissive="#FF5500"
-      emissiveIntensity={0.08}
+      emissiveIntensity={0.12}
       side={THREE.DoubleSide}
       depthWrite={false}
     />
@@ -924,7 +923,7 @@ export function RealisticAquascape({ modelPath = '/models/plant.glb' }) {
 
 // 1. VALLISNERIA SPIRALIS (Hojas largas que llegan a la superficie y se doblan)
 const createVallisneriaGeo = () => {
-  const geo = new THREE.PlaneGeometry(0.32, 7.5, 6, 28)
+  const geo = new THREE.PlaneGeometry(0.32, 7.5, 2, 8)
   const pos = geo.attributes.position
   const v = new THREE.Vector3()
 
@@ -951,7 +950,7 @@ const createVallisneriaGeo = () => {
 
 // 2. ANUBIAS BARTERI (Hojas ovaladas y redondeadas)
 const createAnubiasGeo = () => {
-  const geo = new THREE.PlaneGeometry(0.7, 1.8, 6, 12)
+  const geo = new THREE.PlaneGeometry(0.7, 1.8, 3, 6)
   const pos = geo.attributes.position
   const v = new THREE.Vector3()
 
@@ -977,7 +976,7 @@ const createAnubiasGeo = () => {
 
 // 3. ELEOCHARIS / HAIRGRASS (Césped acuático fino en espiga)
 const createHairgrassGeo = () => {
-  const geo = new THREE.PlaneGeometry(0.06, 1.6, 2, 8)
+  const geo = new THREE.PlaneGeometry(0.06, 1.6, 1, 4)
   const pos = geo.attributes.position
   const v = new THREE.Vector3()
 
@@ -1016,7 +1015,7 @@ const plantColors = {
 // 🪨 FÁBRICA DE ROCAS REALISTAS (VOLUMEN SUAVE Y EROSIÓN NATURAL)
 // ═══════════════════════════════════════════════════════════════════════════════
 const createRealisticRockGeo = () => {
-  const geo = new THREE.SphereGeometry(1, 64, 64)
+  const geo = new THREE.SphereGeometry(1, 24, 18)
   const pos = geo.attributes.position
   const v = new THREE.Vector3()
   
@@ -1173,7 +1172,7 @@ function AquascapeEnvironment() {
     const mixedPlants = []
 
     // 1. VALLISNERIA (Fondo y laterales altos)
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 8; i++) {
       mixedPlants.push({
         id: `val_${i}`,
         type: 'vallisneria',
@@ -1182,12 +1181,12 @@ function AquascapeEnvironment() {
         z: -2.0 - Math.random() * 2.5,
         scale: 0.9 + Math.random() * 0.6,
         rotY: Math.random() * Math.PI * 2,
-        leaves: 4 + Math.floor(Math.random() * 3)
+        leaves: 3 + Math.floor(Math.random() * 2)
       })
     }
 
     // 2. ANUBIAS (Sobre rocas y plano medio)
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 6; i++) {
       mixedPlants.push({
         id: `anu_${i}`,
         type: 'anubias',
@@ -1201,7 +1200,7 @@ function AquascapeEnvironment() {
     }
 
     // 3. HAIRGRASS (Frente denso y tapizante)
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 10; i++) {
       mixedPlants.push({
         id: `hair_${i}`,
         type: 'hairgrass',
@@ -1210,7 +1209,7 @@ function AquascapeEnvironment() {
         z: 0.5 + Math.random() * 2.2,
         scale: 0.45 + Math.random() * 0.4,
         rotY: Math.random() * Math.PI * 2,
-        leaves: 7 + Math.floor(Math.random() * 4)
+        leaves: 4 + Math.floor(Math.random() * 2)
       })
     }
 
@@ -1220,10 +1219,7 @@ function AquascapeEnvironment() {
   useFrame((state) => {
     const t = state.clock.elapsedTime
     if (plantsRef.current) {
-      const children = plantsRef.current.children
-      for (let i = 0; i < children.length; i++) {
-        children[i].rotation.z = Math.sin(t * 1.2 + i * 0.7) * 0.04
-      }
+      plantsRef.current.rotation.z = Math.sin(t * 1.1) * 0.025
     }
   })
 

@@ -3,6 +3,18 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Float, Stars } from '@react-three/drei'
 import * as THREE from 'three'
 
+// ─── HELPER DISPATCH EASTER EGG TOAST ────────────────────────────────────────
+export function triggerEasterEggToast(title, message, icon = '🛸') {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('portfolio-easter-egg', {
+        detail: { title, message, icon }
+      })
+    );
+  }
+}
+
+
 // ═══════════════════════════════════════════════════════════════════════════════
 //  SISTEMA SOLAR 3D CON TEXTURAS FOTOGRÁFICAS 2K DE LA NASA & VÍA LÁCTEA
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -2949,8 +2961,18 @@ export default function OrganicScene({ pathname }) {
     let konamiIndex = 0
 
     const handleKeyDown = (e) => {
+      if (!e || !e.key) return
+      const targetTag = e.target?.tagName?.toLowerCase()
+      if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return
+
+      const expected = konamiSequence[konamiIndex]
+      if (!expected) {
+        konamiIndex = 0
+        return
+      }
+
       const key = e.key.toLowerCase()
-      const expectedKey = konamiSequence[konamiIndex].toLowerCase()
+      const expectedKey = expected.toLowerCase()
 
       if (key === expectedKey) {
         konamiIndex++
@@ -2960,7 +2982,7 @@ export default function OrganicScene({ pathname }) {
           konamiIndex = 0
         }
       } else {
-        konamiIndex = 0
+        konamiIndex = (key === konamiSequence[0].toLowerCase()) ? 1 : 0
       }
     }
 
